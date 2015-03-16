@@ -1,0 +1,104 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{56D266A7-CF86-4939-A974-2795D8C7AB54}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>IEC61850Packet</RootNamespace>
+    <AssemblyName>IEC61850Packet</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="PacketDotNet, Version=0.13.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>lib\PacketDotNet.dll</HintPath>
+    </Reference>
+    <Reference Include="SharpPcap, Version=4.2.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>lib\SharpPcap.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Asn\Asn_1.cs" />
+    <Compile Include="Asn\BerIdentifier.cs" />
+    <Compile Include="Asn\ConstructedTypes\Sequence.cs" />
+    <Compile Include="Asn\LengthFiled.cs" />
+    <Compile Include="Asn\SimpleTypes\Bcd.cs" />
+    <Compile Include="Asn\SimpleTypes\BitString.cs" />
+    <Compile Include="Asn\SimpleTypes\Integer.cs" />
+    <Compile Include="Asn\SimpleTypes\ISimpleType.cs" />
+    <Compile Include="Asn\SimpleTypes\ObjectIdentifier.cs" />
+    <Compile Include="Asn\SimpleTypes\OctetString.cs" />
+    <Compile Include="Asn\SimpleTypes\TimeOfDay.cs" />
+    <Compile Include="Asn\TagFiled.cs" />
+    <Compile Include="Asn\TLV.cs" />
+    <Compile Include="Asn\TLVFileds.cs" />
+    <Compile Include="Asn\ValueFiled.cs" />
+    <Compile Include="CotpFileds.cs" />
+    <Compile Include="CotpPacket.cs" />
+    <Compile Include="Mms\AccessResult.cs" />
+    <Compile Include="Mms\ConfirmedRequestServiceType.cs" />
+    <Compile Include="Mms\ConfirmedResponseServiceType.cs" />
+    <Compile Include="Mms\InformationReport.cs" />
+    <Compile Include="Mms\MmsDetail.cs" />
+    <Compile Include="Mms\MmsPacket.cs" />
+    <Compile Include="Mms\MmsPdu.cs" />
+    <Compile Include="Mms\MmsPduType.cs" />
+    <Compile Include="Mms\MmsService.cs" />
+    <Compile Include="Mms\UnconfirmedDetail.cs" />
+    <Compile Include="Mms\UnconfirmedPdu.cs" />
+    <Compile Include="Mms\UnconfirmedService.cs" />
+    <Compile Include="Mms\UnconfirmedServiceType.cs" />
+    <Compile Include="OsiPresentationPacket.cs" />
+    <Compile Include="OsiSessionFileds.cs" />
+    <Compile Include="OsiSessionPacket.cs" />
+    <Compile Include="OsiSessionPdu.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="TcpPacketType.cs" />
+    <Compile Include="TpktFileds.cs" />
+    <Compile Include="TpktPacket.cs" />
+    <Compile Include="Utils\BigEndianBitConverterEx.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="lib\PacketDotNet.dll" />
+    <Content Include="lib\PacketDotNet.xml" />
+    <Content Include="lib\SharpPcap.dll" />
+    <Content Include="lib\SharpPcap.xml" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>
