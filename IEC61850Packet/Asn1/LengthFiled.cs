@@ -5,7 +5,7 @@ using System.Text;
 using PacketDotNet.Utils;
 using MiscUtil.Conversion;
 
-namespace IEC61850Packet.Asn
+namespace IEC61850Packet.Asn1
 {
     public class LengthFiled
     {

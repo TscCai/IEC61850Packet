@@ -7,10 +7,10 @@ namespace IEC61850Packet.Mms
 {
     public enum MmsPduType : byte
     {
-        ConfirmRequest = 0xA0,
-        ConfirmResponse = 0xA1,
+        ConfirmedRequest = 0xA0,
+        ConfirmedResponse = 0xA1,
         ConfirmError = 0xA2,
-        Unconfirm = 0xA3,
+        Unconfirmed = 0xA3,
         Reject = 0xA4,
         CancelRequest = 0xA5,
         CancelResponse = 0xA6,

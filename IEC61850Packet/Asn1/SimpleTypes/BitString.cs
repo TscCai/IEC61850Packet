@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace IEC61850Packet.Mms
+namespace IEC61850Packet.Asn1.SimpleTypes
 {
-    public abstract class MmsService
+    public class BitString
     {
     }
 }

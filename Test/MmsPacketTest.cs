@@ -5,6 +5,9 @@ using PacketDotNet.Utils;
 using SharpPcap;
 using IEC61850Packet;
 using System.Collections.Generic;
+using IEC61850Packet.Utils;
+using System;
+using IEC61850Packet.Mms;
 
 namespace Test
 {
@@ -37,6 +40,15 @@ namespace Test
                         Packet reass = ReassemblePacket(buffer);
                         packets.Add(new OsiSessionPacket(reass.PayloadData, reass));
                         buffer.Clear();
+
+                        MmsPacket mms = (MmsPacket)packets[0].Extract(typeof(MmsPacket));
+                        if (mms.Pdu is UnconfirmedPdu)
+                        {
+                            var pdu = mms.Pdu as UnconfirmedPdu;
+                            string vmd_specific = pdu.Service.InformationReport.VariableAccessSpecification.VariableListName.Vmd_Specific;
+                            Console.WriteLine(vmd_specific);
+                        }
+
                     }
 
                 }
@@ -68,6 +80,6 @@ namespace Test
             return reaseembled;
         }
 
-
+    
     }
 }

@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using SharpPcap;
-using IEC61850Packet.Asn.SimpleTypes;
-using IEC61850Packet.Asn.ConstructedTypes;
+using IEC61850Packet.Asn1.SimpleTypes;
+using IEC61850Packet.Asn1.ConstructedTypes;
 
-namespace IEC61850Packet.Asn
+namespace IEC61850Packet.Asn1
 {
     public class Asn_1
     {

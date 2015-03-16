@@ -3,9 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace IEC61850Packet.Asn.SimpleTypes
+namespace IEC61850Packet.Asn1
 {
-    public class BitString
+    public class TLVFileds
     {
+  
+       
     }
 }

@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using PacketDotNet.Utils;
-using IEC61850Packet.Asn;
-using IEC61850Packet.Asn.SimpleTypes;
+using IEC61850Packet.Asn1;
+using IEC61850Packet.Asn1.SimpleTypes;
 using IEC61850Packet.Mms;
 using PacketDotNet;
 
@@ -32,7 +32,7 @@ namespace IEC61850Packet
             PdvList[1] = new TLV(FullyEncodedData.Value.Bytes.EncapsulatedBytes(), FullyEncodedData);
             //this.header = bas;
             //this.header.Length = UserData.Bytes.Length-PdvList[1].Bytes.Length;
-            var payload = PdvList[1].Bytes;
+            var payload = PdvList[1].Value.Bytes;
             payloadPacketOrData = new PacketOrByteArraySegment();
 
             switch (PresentationContextIdentifier)

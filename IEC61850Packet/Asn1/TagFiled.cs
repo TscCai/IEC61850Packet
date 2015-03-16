@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using PacketDotNet.Utils;
 
-namespace IEC61850Packet.Asn
+namespace IEC61850Packet.Asn1
 {
     public class TagFiled
     {
@@ -71,7 +71,7 @@ namespace IEC61850Packet.Asn
         static readonly byte CONSTRUCTED_MASK = 0x20;
         static readonly byte TAG_CODE_MASK = 0x1F;
         static readonly byte MAX_SINGLE_OCTET_TAG_CODE = 0x1F;
-        static readonly byte SUCCEED_TAG_CODE_MASK = 0x7F;
+        //static readonly byte SUCCEED_TAG_CODE_MASK = 0x7F;
         static readonly byte LAST_SUCCEED_OCTET_BIT = 7;
         static readonly byte VALID_SUCCEED_OCTET_BIT_CNT = 7;
         static readonly byte CONSTRUCTED_FLAG_BIT = 5;
@@ -92,13 +92,6 @@ namespace IEC61850Packet.Asn
                 {
                     len += 1;   // When mutiple Tag bytes, first byte doesn't indicate the tag code.
                     int cnt = 0;
-                    /*
-                    do
-                    {
-                        cnt++;
-                        _code >>= VALID_SUCCEED_OCTET_BIT_CNT;
-                    } while (_code > 0);
-                     * */
                     cnt=(int)Math.Ceiling(Math.Log(Code, 2) / 7);
                     len += cnt;
                 }
@@ -111,20 +104,6 @@ namespace IEC61850Packet.Asn
         public int Code { get; private set; }
         public byte[] RawBytes { get; private set; }
 
-        /*
-        public static TagFiled ParseTag(ByteArraySegment bas)
-        {
-
-            int len = 1;
-            bas.Length = len;
-            byte tag = bas.ActualBytes()[0];
-            TagType type = (TagType)(tag & TAG_TYPE_MASK);
-            bool isStructure = Convert.ToBoolean(tag & STRUCTURE_MASK);
-            int code = tag & TAG_CODE_MASK;
-            TagFiled result = new TagFiled(type, isStructure, code);
-            return result;
-        }
-        */
         private byte[] EncodeTag()
         {
             byte[] result = new byte[BytesCount];

@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using PacketDotNet.Utils;
 
-namespace IEC61850Packet.Asn
+namespace IEC61850Packet.Asn1
 {
     /// <summary>
     /// a Tag-Length-Value object, not same as PacketDotNet.LLDP.TLV
@@ -21,10 +21,10 @@ namespace IEC61850Packet.Asn
             Length = new LengthFiled(bas);
             bas.Length += Length.RawBytes.Length;
             Value = new ValueFiled(bas, Length.Value);
-            if (Tag.RawBytes.Length == 1)
-            {
-                ValueType = Asn_1.DataTypeMap[Tag.RawBytes[0]];
-            }
+        //    if (Tag.RawBytes.Length == 1)
+        //    {
+        ////        ValueType = Asn_1.DataTypeMap[Tag.RawBytes[0]];
+        //    }
             bas.Length = Tag.RawBytes.Length + Length.RawBytes.Length + Value.Bytes.Length;
             Bytes = bas;
         }
@@ -39,7 +39,7 @@ namespace IEC61850Packet.Asn
 
         public ByteArraySegment Bytes { get; private set; }
 
-        public Type ValueType { get; private set; }
+      //  public Type ValueType { get; private set; }
         public TagFiled Tag { get; private set; }
         public LengthFiled Length { get; private set; }
         public ValueFiled Value { get; private set; }
