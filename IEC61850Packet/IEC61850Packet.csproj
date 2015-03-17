@@ -49,20 +49,25 @@
   <ItemGroup>
     <Compile Include="Asn1\Asn_1.cs" />
     <Compile Include="Asn1\BerIdentifier.cs" />
+    <Compile Include="Asn1\Types\Boolean.cs" />
+    <Compile Include="Mms\Types\FloatPoint.cs" />
+    <Compile Include="Mms\Types\TimeOfDay.cs" />
+    <Compile Include="Asn1\Types\VisibleString.cs" />
+    <Compile Include="Mms\Enum\AccessResultFileds.cs" />
     <Compile Include="Mms\Enum\ObjectNameType.cs" />
-    <Compile Include="Mms\Types\BasicType.cs" />
+    <Compile Include="Asn1\Types\BasicType.cs" />
+    <Compile Include="Mms\Types\Data.cs" />
     <Compile Include="Mms\Types\Domain_Specific.cs" />
+    <Compile Include="Mms\Types\ListOfAccessResult.cs" />
     <Compile Include="Mms\Types\ListOfVariable.cs" />
     <Compile Include="Mms\Types\ObjectName.cs" />
-    <Compile Include="Asn1\ConstructedTypes\Sequence.cs" />
+    <Compile Include="Asn1\Types\Sequence.cs" />
     <Compile Include="Asn1\LengthFiled.cs" />
-    <Compile Include="Asn1\SimpleTypes\Bcd.cs" />
-    <Compile Include="Asn1\SimpleTypes\BitString.cs" />
-    <Compile Include="Asn1\SimpleTypes\Integer.cs" />
-    <Compile Include="Asn1\SimpleTypes\ISimpleType.cs" />
-    <Compile Include="Asn1\SimpleTypes\ObjectIdentifier.cs" />
-    <Compile Include="Asn1\SimpleTypes\OctetString.cs" />
-    <Compile Include="Mms\Types\TimeOfDay.cs" />
+    <Compile Include="Asn1\Types\Bcd.cs" />
+    <Compile Include="Asn1\Types\BitString.cs" />
+    <Compile Include="Asn1\Types\Integer.cs" />
+    <Compile Include="Asn1\Types\ObjectIdentifier.cs" />
+    <Compile Include="Asn1\Types\OctetString.cs" />
     <Compile Include="Asn1\TagFiled.cs" />
     <Compile Include="Asn1\TLV.cs" />
     <Compile Include="Asn1\TLVFileds.cs" />
@@ -102,6 +107,7 @@
     <Content Include="lib\SharpPcap.dll" />
     <Content Include="lib\SharpPcap.xml" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

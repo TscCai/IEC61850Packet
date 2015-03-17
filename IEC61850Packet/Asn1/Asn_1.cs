@@ -3,8 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using SharpPcap;
-using IEC61850Packet.Asn1.SimpleTypes;
-using IEC61850Packet.Asn1.ConstructedTypes;
 
 namespace IEC61850Packet.Asn1
 {
@@ -15,6 +13,7 @@ namespace IEC61850Packet.Asn1
 
         static Asn_1()
         {
+            /*
             // For Universal tag data type.
             DataTypeMap = new Dictionary<byte, Type>();
             DataTypeMap.Add(0x01, typeof(Boolean));
@@ -48,6 +47,7 @@ namespace IEC61850Packet.Asn1
 
             DataTypeMap.Add(0x91, typeof(DateTime));
             // 0x8E, BooleanArray
+             * */
         }
 
 

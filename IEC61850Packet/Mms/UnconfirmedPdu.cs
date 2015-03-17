@@ -23,12 +23,12 @@ namespace IEC61850Packet.Mms
         public UnconfirmedPdu(ByteArraySegment bas, TLV parent)
             : this()
         {
-            TLV service = new TLV(bas, parent);
+            TLV pdu = new TLV(bas, parent);
 
            // UnconfirmedServiceType serviceType = (UnconfirmedServiceType)(EndianBitConverter.Big.ToInt8(, 0));
-            Service = new UnconfirmedService(service.Tag.RawBytes,service.Value.Bytes);
+            Service = new UnconfirmedService(pdu.Tag.RawBytes,pdu.Value.Bytes);
             // Fill the Bytes.
-            base.Bytes = null;
+            base.Bytes = bas;
 
         }
 

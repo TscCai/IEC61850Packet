@@ -67,6 +67,11 @@ namespace IEC61850Packet.Asn1
             
         }
 
+        public TagFiled(byte[] tag):this(new ByteArraySegment(tag))
+        {
+            
+        }
+
         static readonly byte TAG_TYPE_MASK = 0xC0;
         static readonly byte CONSTRUCTED_MASK = 0x20;
         static readonly byte TAG_CODE_MASK = 0x1F;

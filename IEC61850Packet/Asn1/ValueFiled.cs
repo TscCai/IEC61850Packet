@@ -21,6 +21,11 @@ namespace IEC61850Packet.Asn1
             Bytes = bas.EncapsulatedBytes(length);
             Bytes.Length = length;
         }
+
+        public ValueFiled(byte[] value)
+        {
+            Bytes = new ByteArraySegment(value);
+        }
       
     }
 }

@@ -4,7 +4,6 @@ using System.Linq;
 using System.Text;
 using PacketDotNet.Utils;
 using IEC61850Packet.Asn1;
-using IEC61850Packet.Asn1.SimpleTypes;
 using IEC61850Packet.Mms;
 using PacketDotNet;
 

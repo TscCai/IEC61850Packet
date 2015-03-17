@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using PacketDotNet.Utils;
 using MiscUtil.Conversion;
+using IEC61850Packet.Utils;
 
 namespace IEC61850Packet.Asn1
 {
@@ -33,10 +34,10 @@ namespace IEC61850Packet.Asn1
                     switch(len_byteCnt)
                     {
                         case 1:
-                            Value = BigEndianBitConverter.Big.ToChar(len,1);
+                            Value = BigEndianBitConverter.Big.ToUInt8(len,1);
                             break;
                         case 2:
-                            Value = BigEndianBitConverter.Big.ToInt16(len,1);
+                            Value = BigEndianBitConverter.Big.ToUInt16(len,1);
                             break;
                         default:
                             Value = 0;
@@ -63,7 +64,9 @@ namespace IEC61850Packet.Asn1
         }
 
         public LengthFiled(byte[] rawBytes):this(new ByteArraySegment(rawBytes))
-        {}
+        {
+        
+        }
 
         public LengthFiled(LengthType type, int lengthValue)
         {

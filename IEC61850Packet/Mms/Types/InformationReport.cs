@@ -7,37 +7,48 @@ using PacketDotNet.Utils;
 using MiscUtil.Conversion;
 using IEC61850Packet.Utils;
 using IEC61850Packet.Mms.Types;
+using IEC61850Packet.Asn1.Types;
 
 namespace IEC61850Packet.Mms
 {
     public class InformationReport : BasicType
     {
         public VariableAccessSpecification VariableAccessSpecification { get; set; }
-        public AccessResult[] ListOfAccessResult { get; set; }
-
+        public List<AccessResult> ListOfAccessResult { get; set; }
+        TLV tlv_listOfAccessResult;
+        byte[] ListOfAccessResultId { get; set; }
         public InformationReport()
         {
             // According to MMS defination
             this.Identifier = BerIdentifier.Encode(BerIdentifier.CONTEXT_SPECIFIC, BerIdentifier.CONSTRUCTED, 0);
+            this.ListOfAccessResultId = BerIdentifier.Encode(BerIdentifier.CONTEXT_SPECIFIC, BerIdentifier.CONSTRUCTED, 0);
         }
 
-        public InformationReport( ByteArraySegment bas)
+        public InformationReport(ByteArraySegment bas)
             : this()
         {
-            VariableAccessSpecification = new VariableAccessSpecification(bas);
-            //TLV ir = new TLV(bas);
-            //VariableAccessSpecificationType type = (VariableAccessSpecificationType)BigEndianBitConverter.Big.ToInt8(ir.Tag.RawBytes,0);
-            //switch (type)
-            //{
-            //    case VariableAccessSpecificationType.VariableListName:
-            //        VariableAccessSpecification = new VariableListName(ir.Value.Bytes);
-            //        break;
-            //    case VariableAccessSpecificationType.ListOfVariable:
-            //        break;
-            //    default:
-            //        break;
-            //}
+            TLV ir = new TLV(bas);
+            this.Bytes = bas;
+            VariableAccessSpecification = new VariableAccessSpecification(ir.Bytes);
+
             // Decode ListofAccessResult
+            ByteArraySegment list = new ByteArraySegment(bas.EncapsulatedBytes());
+            tlv_listOfAccessResult = new TLV(list);
+            int totalLen = list.Length;
+            var items = tlv_listOfAccessResult.Value.RawBytes;
+            ByteArraySegment bas_items = new ByteArraySegment(items);
+            int pos = 0;
+            ListOfAccessResult = new List<AccessResult>();
+            while (pos <= totalLen)
+            {
+                AccessResult ar = new AccessResult(new TLV(bas_items));
+                ListOfAccessResult.Add(ar);
+                pos += ar.Bytes.Length;
+                bas_items = bas_items.EncapsulatedBytes();
+               // tlv_listOfAccessResult.Bytes.Length+=
+            }
+
+
         }
     }
 }
