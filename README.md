@@ -1,4 +1,5 @@
-# IEC61850-Packet
-A library to generate and resolve packets adoptted in IEC 61850. This project is for education and research mainly.
+# IEC61850 Packet#
 
-Dependency: Packet.Net, SharpCap
+IEC61850 Packet is a library to generate and resolve packets adoptted in IEC 61850. This project is for education and research mainly.
+
+**Dependency:** Packet.Net, SharpCap
