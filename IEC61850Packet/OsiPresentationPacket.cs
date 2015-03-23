@@ -29,8 +29,8 @@ namespace IEC61850Packet
             PresentationContextIdentifier = (ContextIdentifier)(PdvList[0].Value.RawBytes[0]);
 
             PdvList[1] = new TLV(FullyEncodedData.Value.Bytes.EncapsulatedBytes(), FullyEncodedData);
-            //this.header = bas;
-            //this.header.Length = UserData.Bytes.Length-PdvList[1].Bytes.Length;
+            this.header = bas;
+            this.header.Length =UserData.Bytes.Length-PdvList[1].Bytes.Length;
             var payload = PdvList[1].Value.Bytes;
             payloadPacketOrData = new PacketOrByteArraySegment();
 

@@ -10,6 +10,7 @@ using IEC61850Packet;
 using IEC61850Packet.Utils;
 using IEC61850Packet.Mms;
 using IEC61850Packet.Asn1.Types;
+using TAsn1 = IEC61850Packet.Asn1.Types;
 using IEC61850Packet.Mms.Types;
 using IEC61850Packet.Asn1;
 using System.Linq;
@@ -46,19 +47,15 @@ namespace Test
                         packets.Add(new OsiSessionPacket(reass.PayloadData, reass));
                         buffer.Clear();
 
-                        MmsPacket mms = (MmsPacket)packets[0].Extract(typeof(MmsPacket));
+                        MmsPacket mms = (MmsPacket)packets.Last().Extract(typeof(MmsPacket));
                         if (mms.Pdu is UnconfirmedPdu)
                         {
                             var pdu = mms.Pdu as UnconfirmedPdu;
-                            string vmd_specific = pdu.Service.InformationReport.VariableAccessSpecification.VariableListName.Vmd_Specific;
-                            Console.WriteLine(vmd_specific);
+                            string dsRef = pdu.Service.InformationReport.ListOfAccessResult[3].Success.GetValue<IEC61850Packet.Asn1.Types.VisibleString>().Value;
+                            Console.WriteLine(dsRef);
                         }
-
                     }
-
                 }
-
-
                 rawCapture = dev.GetNextPacket();
             }
 
@@ -118,6 +115,7 @@ namespace Test
 
         }
 
+        [TestMethod]
         public void FloatingPoint_Test()
         {
             float a = 45.0000000F;
@@ -132,7 +130,7 @@ namespace Test
             DateTime date = new DateTime(2014, 8, 13, 7, 8, 31, 587);
             DateTime baseline = new DateTime(1984, 1, 1);
             byte[] id = { 0x8C };
-            byte[] len = { 0x06};
+            byte[] len = { 0x06 };
             byte[] val = { 0x01, 0x88, 0x53, 0xE3, 0x2B, 0xAE };
             byte[] raw = new byte[id.Length + len.Length + val.Length];
             id.CopyTo(raw, 0);
@@ -143,7 +141,33 @@ namespace Test
             DateTime result = tod.Value;
             Assert.AreEqual(date, result);
 
-            
+
+        }
+
+        [TestMethod]
+        public void Structure_Test()
+        {
+            byte[] raw = { 0xa2,0x12, 0x83, 0x01, 0x00, 0x84, 0x03,0x03,0x00,0x00,0x91,0x08,0x53,0xe9,0xc5,0x9f,
+                         0xaa,0x7e,0xef,0x2a};
+            Data d = new Data(new TLV(new ByteArraySegment(raw)));
+            Structure s = d.GetValue<Structure>();
+            for (int i = 0; i < s.Values.Count; i++)
+            {
+                switch (s.Types[i])
+                {
+                    case Data.VariableType.Boolean:
+                        Console.WriteLine(((TAsn1.Boolean)s.Values[i]).Value);
+                        break;
+                    case Data.VariableType.BitString:
+                        Console.WriteLine(((BitString)s.Values[i]).Value);
+                        break;
+                    case Data.VariableType.UtcTime:
+                        Console.WriteLine(((UtcTime)s.Values[i]).ToString());
+                        break;
+
+                }
+            }
+
         }
 
     }

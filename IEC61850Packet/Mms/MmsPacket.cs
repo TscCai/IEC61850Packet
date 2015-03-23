@@ -1,10 +1,10 @@
-﻿using IEC61850Packet.Asn1;
-using PacketDotNet;
-using PacketDotNet.Utils;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using IEC61850Packet.Asn1;
+using PacketDotNet;
+using PacketDotNet.Utils;
 using MiscUtil.Conversion;
 using IEC61850Packet.Utils;
 
@@ -20,13 +20,19 @@ namespace IEC61850Packet.Mms
             this.ParentPacket = parent;
             
             // Set PduType
-            TLV packet = new TLV(bas);
+            TLV pdu = new TLV(bas);
+            this.header = bas;
+            this.header.Length = pdu.Tag.RawBytes.Length + pdu.Length.RawBytes.Length;
+            this.payloadPacketOrData = new PacketOrByteArraySegment();
+            this.payloadPacketOrData.TheByteArraySegment = this.header.EncapsulatedBytes();
 
-            MmsPduType pduId = (MmsPduType)BigEndianBitConverter.Big.ToInt8(packet.Tag.RawBytes,0);
+            MmsPduType pduId = (MmsPduType)BigEndianBitConverter.Big.ToInt8(pdu.Tag.RawBytes,0);
             switch (pduId)
             {
                 case MmsPduType.Unconfirmed:
-                   Pdu = new UnconfirmedPdu(packet.Value.Bytes,packet);
+                   Pdu = new UnconfirmedPdu(pdu.Value.Bytes,pdu);
+                   var list = ((UnconfirmedPdu)Pdu).Service.InformationReport.ListOfAccessResult;
+                   this.payloadPacketOrData.ThePacket = new AcsiPacket(list, this);
                     break;
                 case MmsPduType.ConfirmedRequest:
                     break;
@@ -35,8 +41,7 @@ namespace IEC61850Packet.Mms
                 default:
                     break;
             }
-            this.payloadPacketOrData = new PacketOrByteArraySegment();
-            this.payloadPacketOrData.TheByteArraySegment = bas;
+
 
         }
     }

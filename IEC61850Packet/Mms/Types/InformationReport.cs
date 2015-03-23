@@ -34,18 +34,18 @@ namespace IEC61850Packet.Mms
             // Decode ListofAccessResult
             ByteArraySegment list = new ByteArraySegment(bas.EncapsulatedBytes());
             tlv_listOfAccessResult = new TLV(list);
-            int totalLen = list.Length;
-            var items = tlv_listOfAccessResult.Value.RawBytes;
+            int totalLen = tlv_listOfAccessResult.Length.Value;
+            byte[] items = tlv_listOfAccessResult.Value.RawBytes;
             ByteArraySegment bas_items = new ByteArraySegment(items);
             int pos = 0;
             ListOfAccessResult = new List<AccessResult>();
-            while (pos <= totalLen)
+            while (pos < totalLen)
             {
+                
                 AccessResult ar = new AccessResult(new TLV(bas_items));
                 ListOfAccessResult.Add(ar);
                 pos += ar.Bytes.Length;
                 bas_items = bas_items.EncapsulatedBytes();
-               // tlv_listOfAccessResult.Bytes.Length+=
             }
 
 
