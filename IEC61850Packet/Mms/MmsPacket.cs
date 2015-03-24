@@ -14,11 +14,12 @@ namespace IEC61850Packet.Mms
     {
         //public MmsPduType PduType { get; set; }
         public MmsPdu Pdu { get; set; }
+        public AcsiMapping Acsi { get; private set; }
 
         public MmsPacket(ByteArraySegment bas, Packet parent)
         {
             this.ParentPacket = parent;
-            
+
             // Set PduType
             TLV pdu = new TLV(bas);
             this.header = bas;
@@ -26,13 +27,13 @@ namespace IEC61850Packet.Mms
             this.payloadPacketOrData = new PacketOrByteArraySegment();
             this.payloadPacketOrData.TheByteArraySegment = this.header.EncapsulatedBytes();
 
-            MmsPduType pduId = (MmsPduType)BigEndianBitConverter.Big.ToInt8(pdu.Tag.RawBytes,0);
+            MmsPduType pduId = (MmsPduType)BigEndianBitConverter.Big.ToInt8(pdu.Tag.RawBytes, 0);
             switch (pduId)
             {
                 case MmsPduType.Unconfirmed:
-                   Pdu = new UnconfirmedPdu(pdu.Value.Bytes,pdu);
-                   var list = ((UnconfirmedPdu)Pdu).Service.InformationReport.ListOfAccessResult;
-                   this.payloadPacketOrData.ThePacket = new AcsiPacket(list, this);
+                    Pdu = new UnconfirmedPdu(pdu.Value.Bytes, pdu);
+                    var list = ((UnconfirmedPdu)Pdu).Service.InformationReport.ListOfAccessResult;
+                    Acsi = new AcsiMapping(list);
                     break;
                 case MmsPduType.ConfirmedRequest:
                     break;

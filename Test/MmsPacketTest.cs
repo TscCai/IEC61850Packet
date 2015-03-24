@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using SharpPcap;
 using SharpPcap.LibPcap;
@@ -13,7 +14,7 @@ using IEC61850Packet.Asn1.Types;
 using TAsn1 = IEC61850Packet.Asn1.Types;
 using IEC61850Packet.Mms.Types;
 using IEC61850Packet.Asn1;
-using System.Linq;
+
 
 namespace Test
 {
@@ -99,8 +100,8 @@ namespace Test
                 Console.WriteLine(d.GetValue<VisibleString>().Value);
             }
             id[0] = 0x84;
-            len[0] = 0x03;
-            val = new byte[] { 0x06, 0x3E, 0x00 };
+            len[0] = 0x0E;
+            val = new byte[] { 0x04, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xF0 };
 
             raw = new byte[id.Length + len.Length + val.Length];
             id.CopyTo(raw, 0);

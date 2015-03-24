@@ -47,7 +47,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AcsiPacket.cs" />
+    <Compile Include="AcsiMapping.cs" />
     <Compile Include="Asn1\Asn_1.cs" />
     <Compile Include="Asn1\BerIdentifier.cs" />
     <Compile Include="Asn1\Types\Boolean.cs" />
