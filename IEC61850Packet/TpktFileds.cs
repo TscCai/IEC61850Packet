@@ -5,7 +5,7 @@ using System.Text;
 
 namespace IEC61850Packet
 {
-    public class TpktFileds
+    public struct TpktFileds
     {
         public static readonly int TpktHeaderLength = 4 ;    // Include Version, reserved, length
 
@@ -13,5 +13,9 @@ namespace IEC61850Packet
         public static readonly int TpktHeaderReservedLength = 1;
 
         public static readonly int TpktLengthLength = 2;
+
+        public bool LeadWithSegment;
+        public int LeadingSegmentLength;
+
     }
 }

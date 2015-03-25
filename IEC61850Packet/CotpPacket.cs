@@ -27,6 +27,9 @@ namespace IEC61850Packet
 
         public bool LastDataUnit { get; private set; }
 
+        static readonly byte TPDU_NUM_MASK = 0x7F;
+        static readonly byte LAST_DU_BIT= 7;
+
         public CotpPacket() { }
 
         public CotpPacket(ByteArraySegment bas, Packet parent)
@@ -46,8 +49,8 @@ namespace IEC61850Packet
                 case TpduType.ConnectionConfirm:
                     break;
                 case TpduType.DataTransfer:
-                    TpduNumber = num_eot & 0x7F;
-                    LastDataUnit = Convert.ToBoolean(num_eot >> 7);
+                    TpduNumber = num_eot & TPDU_NUM_MASK;
+                    LastDataUnit = Convert.ToBoolean(num_eot >> LAST_DU_BIT);
                     break;
                 case TpduType.DisconnectionRequest:
                     break;

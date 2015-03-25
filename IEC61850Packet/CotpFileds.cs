@@ -5,7 +5,7 @@ using System.Text;
 
 namespace IEC61850Packet
 {
-    public class CotpFileds
+    public struct CotpFileds
     {
         
         public static readonly int LengthLength = 1;

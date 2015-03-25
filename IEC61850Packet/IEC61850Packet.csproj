@@ -20,6 +20,8 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <DocumentationFile>
+    </DocumentationFile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -51,6 +53,7 @@
     <Compile Include="Asn1\Asn_1.cs" />
     <Compile Include="Asn1\BerIdentifier.cs" />
     <Compile Include="Asn1\Types\Boolean.cs" />
+    <Compile Include="CotpPacketBuffer.cs" />
     <Compile Include="Mms\Types\FloatPoint.cs" />
     <Compile Include="Mms\Types\Structure.cs" />
     <Compile Include="Mms\Types\TimeOfDay.cs" />
@@ -103,8 +106,10 @@
     <Compile Include="TcpPacketType.cs" />
     <Compile Include="TpktFileds.cs" />
     <Compile Include="TpktPacket.cs" />
+    <Compile Include="TpktPacketBuffer.cs" />
     <Compile Include="Utils\ArrayEx.cs" />
     <Compile Include="Utils\BigEndianBitConverterEx.cs" />
+    <Compile Include="Utils\PacketEx.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="lib\PacketDotNet.dll" />

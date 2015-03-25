@@ -44,9 +44,8 @@ namespace IEC61850Packet
 
         private void Resovle()
         {
-            int pos = 0;    // 0 is RptID, 1 is OptFlds
             RptID = ListOfAccessResult[pos].Success.GetValue<VisibleString>().Value;
-            pos++;
+            pos++;  // 0 is RptID, 1 is OptFlds
 
             BitString bitstr = ListOfAccessResult[pos].Success.GetValue<BitString>();
             pos++;
