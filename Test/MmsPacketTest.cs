@@ -24,6 +24,7 @@ namespace Test
         [TestMethod]
         public void ParseFromFile()
         {
+            int pcnt = 1;
             var dev = new CaptureFileReaderDevice(@"..\..\CapturedFiles\20140813-150920_0005ED9B-50+60_MMS.pcap");
             dev.Filter = "ip src 198.121.0.115 and tcp"; // 92 or 115
             dev.Open();
@@ -32,6 +33,7 @@ namespace Test
             TpktPacketBuffer tpktBuff = new TpktPacketBuffer();
             CotpPacketBuffer cotpBuff = new CotpPacketBuffer();
             rawCapture = dev.GetNextPacket();
+            
             while (rawCapture != null)
             {
                 Packet p = Packet.ParsePacket(rawCapture.LinkLayerType, rawCapture.Data);            
@@ -39,7 +41,7 @@ namespace Test
                 if (tcp.PayloadData != null && tcp.PayloadData.Length > 0)
                 {
                     TpktFileds tf=new TpktFileds();
-                    if (!tpktBuff.IsReassembled)
+                    if (tpktBuff.Count>0 && !tpktBuff.IsReassembled)
                     {
                         tf.LeadWithSegment = true;
                         tf.LeadingSegmentLength = tpktBuff.Last.NextFrameSegmentLength;
@@ -79,6 +81,7 @@ namespace Test
                     }
                 }
                 rawCapture = dev.GetNextPacket();
+                pcnt++;
             }
 
             dev.Close();

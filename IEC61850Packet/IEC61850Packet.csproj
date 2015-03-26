@@ -107,6 +107,7 @@
     <Compile Include="TpktFileds.cs" />
     <Compile Include="TpktPacket.cs" />
     <Compile Include="TpktPacketBuffer.cs" />
+    <Compile Include="TpktSegment.cs" />
     <Compile Include="Utils\ArrayEx.cs" />
     <Compile Include="Utils\BigEndianBitConverterEx.cs" />
     <Compile Include="Utils\PacketEx.cs" />

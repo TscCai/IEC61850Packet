@@ -11,12 +11,15 @@ namespace IEC61850Packet
     {
         public List<TpktPacket> Reassembled { get; private set; }
         public bool IsReassembled { get; private set; }
-        List<TpktPacket> PacketBuffer { get; set; }
-        public TpktPacketBuffer(): base()
+
+        List<byte> segBuffer;
+        List<TpktPacket> packetBuffer;
+        public TpktPacketBuffer()
         {
             IsReassembled = false;
             Reassembled = new List<TpktPacket>();
-            PacketBuffer = new List<TpktPacket>();
+            packetBuffer = new List<TpktPacket>();
+            segBuffer = new List<byte>();
         }
 
         public TpktPacketBuffer(TpktPacket packet)
@@ -27,14 +30,47 @@ namespace IEC61850Packet
 
         public TpktPacket Last
         {
-            get { return PacketBuffer.Last(); }
+            get { return packetBuffer.Last(); }
+        }
+
+        public int Count
+        {
+            get { return packetBuffer.Count; }
         }
 
         public void Reassemble()
         {
-            List<TpktPacket> result = new List<TpktPacket>();
+            Reassembled = new List<TpktPacket>();
+            segBuffer.AddRange(packetBuffer[0].Header);
+            segBuffer.AddRange(packetBuffer[0].PayloadData);
+            Reassembled.Add(new TpktPacket(segBuffer.ToArray(), packetBuffer[0].ParentPacket));
+            segBuffer.Clear();
+            Reassemble(packetBuffer[0].TpktSegments);
 
+            for (int i = 1; i < Count; i++)
+            {
+                TpktPacket p = packetBuffer[i];
+                Reassemble(p.TpktSegments);
+            }
+            if (segBuffer.Count > 0)
+            {
+                Reassembled.Add(new TpktPacket(segBuffer.ToArray(), packetBuffer[Count - 1].ParentPacket));
+                segBuffer.Clear();
+            }
             IsReassembled = true;
+        }
+
+        private void Reassemble(List<TpktSegment> segments)
+        {
+            foreach (var i in segments)
+            {
+                if (i.StartWithHeader && segBuffer.Count > 0)
+                {
+                    Reassembled.Add(new TpktPacket(segBuffer.ToArray(), packetBuffer[0].ParentPacket));
+                    segBuffer.Clear();
+                }
+                segBuffer.AddRange(i.Segment.ActualBytes());
+            }
         }
 
         /// <summary>
@@ -50,8 +86,8 @@ namespace IEC61850Packet
             }
             else
             {
-                PacketBuffer.Add(packet);
-                if(packet.LastSegment)
+                packetBuffer.Add(packet);
+                if (packet.LastSegment)
                 {
                     Reassemble();
                 }
@@ -62,7 +98,7 @@ namespace IEC61850Packet
         {
             IsReassembled = false;
             Reassembled.Clear();
-            PacketBuffer.Clear();
+            packetBuffer.Clear();
         }
 
     }
