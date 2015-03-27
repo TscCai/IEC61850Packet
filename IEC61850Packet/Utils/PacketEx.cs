@@ -21,5 +21,11 @@ namespace IEC61850Packet.Utils
             object p =  packet.Extract(typeof(T));
             return (T)p;
         }
+
+        public static T ParentPacket<T>(this Packet packet)
+        {
+            object p = packet.ParentPacket;
+            return (T)p;
+        }
     }
 }

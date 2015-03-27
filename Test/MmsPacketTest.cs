@@ -14,6 +14,7 @@ using IEC61850Packet.Asn1.Types;
 using TAsn1 = IEC61850Packet.Asn1.Types;
 using IEC61850Packet.Mms.Types;
 using IEC61850Packet.Asn1;
+using IEC61850Packet.Device;
 
 
 namespace Test
@@ -26,7 +27,7 @@ namespace Test
         {
             int pcnt = 1;
             var dev = new CaptureFileReaderDevice(@"..\..\CapturedFiles\20140813-150920_0005ED9B-50+60_MMS.pcap");
-            dev.Filter = "ip src 198.121.0.92 and tcp"; // 92 or 115
+            dev.Filter = "ip src 198.121.0.115 and tcp"; // 92 or 115
             // won't work correctly if not give the ip source ( The buffer will take all the packets from different source)
             dev.Open();
             RawCapture rawCapture;
@@ -35,11 +36,12 @@ namespace Test
             CotpPacketBuffer cotpBuff = new CotpPacketBuffer();
             rawCapture = dev.GetNextPacket();
             
+            
             while (rawCapture != null)
             {
                 Packet p = Packet.ParsePacket(rawCapture.LinkLayerType, rawCapture.Data);            
                 TcpPacket tcp = p.Extract<TcpPacket>();
-                if (tcp.PayloadData != null && tcp.PayloadData.Length > 0)
+                if (tcp.PayloadData.Length > 0)
                 {
                     TpktFileds tf=new TpktFileds();
                     if (tpktBuff.Count>0 && !tpktBuff.IsReassembled)
@@ -176,6 +178,16 @@ namespace Test
                 }
             }
 
+        }
+
+        [TestMethod]
+        public void ResovleDevice_Test()
+        {
+            string captureFilename = @"..\..\CapturedFiles\20140813-150920_0005ED9B-50+60_MMS.pcap";
+            ResolveDevice dev = new ResolveDevice(captureFilename);
+            dev.Open();
+            // some works here
+            dev.Close();
         }
 
     }

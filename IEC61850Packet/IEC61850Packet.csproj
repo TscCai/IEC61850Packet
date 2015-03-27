@@ -54,6 +54,8 @@
     <Compile Include="Asn1\BerIdentifier.cs" />
     <Compile Include="Asn1\Types\Boolean.cs" />
     <Compile Include="CotpPacketBuffer.cs" />
+    <Compile Include="CotpPacketBufferFactory.cs" />
+    <Compile Include="TpktPacketBufferFactory.cs" />
     <Compile Include="Mms\Types\FloatPoint.cs" />
     <Compile Include="Mms\Types\Structure.cs" />
     <Compile Include="Mms\Types\TimeOfDay.cs" />
@@ -103,6 +105,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ReasonCodeType.cs" />
     <Compile Include="ReportedOptFldsType.cs" />
+    <Compile Include="Device\ResolveDevice.cs" />
     <Compile Include="TcpPacketType.cs" />
     <Compile Include="TpktFileds.cs" />
     <Compile Include="TpktPacket.cs" />
