@@ -17,7 +17,7 @@ namespace IEC61850Packet
         public bool LastSegment { get; private set; }
         public int NextFrameSegmentLength { get; private set; }
         TpktFileds fileds;
-     
+
         /// <summary>
         /// TPKT packet length, including header. Decoded form the Length filed from header
         /// </summary>
@@ -57,7 +57,8 @@ namespace IEC61850Packet
 
         }
 
-        public TpktPacket(byte[] rawData, Packet parent):this(rawData,parent,new TpktFileds())
+        public TpktPacket(byte[] rawData, Packet parent)
+            : this(rawData, parent, new TpktFileds())
         {
         }
 
@@ -133,27 +134,31 @@ namespace IEC61850Packet
             if (referFileds)
             {
                 segs.Length = fileds.LeadingSegmentLength;
-                TpktSegments.Add(new TpktSegment(this.header.ActualBytes(),false));   // possible some refactoring here
+                TpktSegments.Add(new TpktSegment(this.header.ActualBytes(), false));   // possible some refactoring here
                 segs = segs.EncapsulatedBytes();
                 // refresh the length value
                 segLen = segs.Length;   // When succssor's payload has only one segment, it will crash. see X.X.0.115 No.7322, 7325
             }
-            byte[] potentialHeader = segs.ActualBytes().Take(TpktFileds.TpktHeaderLength).ToArray();
-            type = (TcpPacketType)(BigEndianBitConverter.Big.ToInt16(potentialHeader, 0));
-            switch (type)
+            if (segLen > 0)
             {
-                case TcpPacketType.Tpkt:
-                    int tpktLen = BigEndianBitConverter.Big.ToInt16(potentialHeader,
-                        TpktFileds.TpktHeaderReservedLength + TpktFileds.TpktHeaderVersionLength
-                        );
-                    // refresh the length value
-                //    segs.Length = segLen;
-                    BuildSegments(segs, tpktLen, segLen);
-                    break;
-                default:
-                    break;
+                byte[] potentialHeader = segs.ActualBytes().Take(TpktFileds.TpktHeaderLength).ToArray();
+                type = (TcpPacketType)(BigEndianBitConverter.Big.ToInt16(potentialHeader, 0));
+                switch (type)
+                {
+                    case TcpPacketType.Tpkt:
+                        int tpktLen = BigEndianBitConverter.Big.ToInt16(potentialHeader,
+                            TpktFileds.TpktHeaderReservedLength + TpktFileds.TpktHeaderVersionLength
+                            );
+                        // refresh the length value
+                        //    segs.Length = segLen;
+                        BuildSegments(segs, tpktLen, segLen);
+                        break;
+                    default:
+                        break;
+                }
             }
         }
+
 
         /// <summary>
         /// Should always be invoked by other overload method.
@@ -184,7 +189,7 @@ namespace IEC61850Packet
             {
                 // Contains a integral TPKT and another one or more segment(s) succeed
                 segs.Length = tpktLen;
-                TpktSegments.Add(new TpktSegment(segs,true));
+                TpktSegments.Add(new TpktSegment(segs, true));
                 //this.payloadPacketOrData.ThePacket = new CotpPacket(segs, this);
                 BuildSegments(segs.EncapsulatedBytes(), false);
             }
