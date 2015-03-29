@@ -16,7 +16,8 @@ namespace IEC61850Packet.Device
     public class ResolveDevice : CaptureFileReaderDevice
     {
         public int PacketCount { get; private set; }
-        public ResolveDevice(string captureFilename):base(captureFilename) { }
+        public ResolveDevice(string captureFilename) : base(captureFilename) { }
+        List<Packet> packets;
         public override void Open()
         {
             base.Open();
@@ -24,10 +25,9 @@ namespace IEC61850Packet.Device
             int pcnt = 1;
             // var dev = new CaptureFileReaderDevice(@"..\..\CapturedFiles\20140813-150920_0005ED9B-50+60_MMS.pcap");
             // dev.Filter = "ip src 198.121.0.92 and tcp"; // 92 or 115
-            // won't work correctly if not give the ip source ( The buffer will take all the packets from different source)
-            //dev.Open();
+            
             RawCapture rawCapture;
-            List<Packet> packets = new List<Packet>();
+            packets = new List<Packet>();
             TpktPacketBuffer tpktBuff;
             CotpPacketBuffer cotpBuff;
             rawCapture = base.GetNextPacket();
@@ -36,8 +36,8 @@ namespace IEC61850Packet.Device
             {
                 Packet p = Packet.ParsePacket(rawCapture.LinkLayerType, rawCapture.Data);
                 TcpPacket tcp = p.Extract<TcpPacket>();
-                if (tcp !=null  && tcp.PayloadData.Length > 0)
-                {                  
+                if (tcp != null && tcp.PayloadData.Length > 0)
+                {
                     TpktFileds tf = new TpktFileds();
                     string srcIp = tcp.ParentPacket<IPv4Packet>().SourceAddress.ToString();
                     tpktBuff = TpktPacketBufferFactory.GetBuffer(srcIp);
@@ -60,7 +60,15 @@ namespace IEC61850Packet.Device
                                 if (cotpBuff.IsReassembled)
                                 {
                                     CotpPacket reassCotp = cotpBuff.Reassembled;
-                                    packets.Add(new OsiSessionPacket(reassCotp.PayloadData, reassCotp));
+                                    try
+                                    {
+                                        packets.Add(new OsiSessionPacket(reassCotp.PayloadData, reassCotp));
+                                    }
+                                    catch (Exception ex)
+                                    {
+                                        Console.WriteLine("Packet count: {0}",pcnt);
+                                        Console.WriteLine(ex.StackTrace);
+                                    }
                                     cotpBuff.Reset();
 
                                     #region For debug
