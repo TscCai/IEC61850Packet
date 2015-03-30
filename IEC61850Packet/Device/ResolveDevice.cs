@@ -47,24 +47,26 @@ namespace IEC61850Packet.Device
                         tf.LeadingSegmentLength = tpktBuff.Last.NextFrameSegmentLength;
                     }
                     TpktPacket tpkt = new TpktPacket(tcp.PayloadData, tcp, tf);
-                    tpktBuff.Add(tpkt);
-                    if (tpktBuff.IsReassembled)
+                    if (tpkt.PayloadPacket != null || tpkt.PayloadData != null)
                     {
-                        foreach (TpktPacket reassTpkt in tpktBuff.Reassembled)
+                        tpktBuff.Add(tpkt);
+                        if (tpktBuff.IsReassembled)
                         {
-                            CotpPacket cotp = reassTpkt.Extract<CotpPacket>();
-                            if (cotp.Type == CotpPacket.TpduType.DataTransfer)
+                            foreach (TpktPacket reassTpkt in tpktBuff.Reassembled)
                             {
-                                cotpBuff = CotpPacketBufferFactory.GetBuffer(srcIp);
-                                cotpBuff.Add(cotp);
-                                if (cotpBuff.IsReassembled)
+                                CotpPacket cotp = reassTpkt.Extract<CotpPacket>();
+                                if (cotp.Type == CotpPacket.TpduType.DataTransfer)
                                 {
-                                    CotpPacket reassCotp = cotpBuff.Reassembled;
+                                    cotpBuff = CotpPacketBufferFactory.GetBuffer(srcIp);
+                                    cotpBuff.Add(cotp);
+                                    if (cotpBuff.IsReassembled)
+                                    {
+                                        CotpPacket reassCotp = cotpBuff.Reassembled;
 #if DEBUG
                                     try
                                     {
 #endif
-                                    packets.Add(new OsiSessionPacket(reassCotp.PayloadData, reassCotp));
+                                        packets.Add(new OsiSessionPacket(reassCotp.PayloadData, reassCotp));
 #if DEBUG
                                     }
                                     catch (Exception ex)
@@ -74,24 +76,25 @@ namespace IEC61850Packet.Device
                                         throw ex;
                                     }
 #endif
-                                    cotpBuff.Reset();
+                                        cotpBuff.Reset();
 
-                                    #region For debug
+                                        #region For debug
 #if DEBUG
                                     MmsPacket mms = (MmsPacket)packets.Last().Extract(typeof(MmsPacket));
                                     if (mms.Pdu is UnconfirmedPdu)
                                     {
                                         var pdu = mms.Pdu as UnconfirmedPdu;
                                         string dsRef = pdu.Service.InformationReport.ListOfAccessResult[3].Success.GetValue<IEC61850Packet.Asn1.Types.VisibleString>().Value;
-                                        Console.WriteLine(dsRef);
+                                        Console.WriteLine("No. {0}: {1}",pcnt,dsRef);
                                     }
 #endif
-                                    #endregion
-                                }
+                                        #endregion
+                                    }
 
+                                }
                             }
+                            tpktBuff.Reset();
                         }
-                        tpktBuff.Reset();
                     }
                 }
                 else

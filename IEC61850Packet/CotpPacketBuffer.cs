@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using PacketDotNet;
 using PacketDotNet.Utils;
+using IEC61850Packet.Utils;
 
 namespace IEC61850Packet
 {
@@ -22,11 +23,11 @@ namespace IEC61850Packet
             //private set;
         }
         public bool IsReassembled { get; private set; }
-        List<CotpPacket> PacketBuffer { get; set; }
+        List<CotpPacket> packetBuffer { get; set; }
         CotpPacket reassembled;
         public CotpPacketBuffer()
         {
-            PacketBuffer = new List<CotpPacket>();
+            packetBuffer = new List<CotpPacket>();
         }
 
         public CotpPacketBuffer(CotpPacket packet)
@@ -39,7 +40,7 @@ namespace IEC61850Packet
 
         public void Add(CotpPacket packet)
         {
-            PacketBuffer.Add(packet);
+            packetBuffer.Add(packet);
             if (packet.LastDataUnit)
             {
                 Reasseble();
@@ -54,11 +55,12 @@ namespace IEC61850Packet
         /// <summary>
         /// Reaseemble the packets in Buffer, and flush it.
         /// </summary>
-        public void Reasseble()
+        private void Reasseble()
         {
+            ReSort();
             List<byte> joint = new List<byte>();
-            joint.AddRange(PacketBuffer[PacketBuffer.Count - 1].Header);
-            foreach (Packet i in PacketBuffer)
+            joint.AddRange(packetBuffer[packetBuffer.Count - 1].Header);
+            foreach (Packet i in packetBuffer)
             {
                 joint.AddRange(i.PayloadData);
             }
@@ -67,13 +69,18 @@ namespace IEC61850Packet
             joint.Clear();
             joint = null;
             IsReassembled = true;
-            PacketBuffer.Clear();
+            packetBuffer.Clear();
 
+        }
+
+        private void ReSort()
+        {
+            packetBuffer = packetBuffer.OrderBy(p => p.ParentPacket.ParentPacket<TcpPacket>().SequenceNumber).ToList();
         }
 
         public void Reset()
         {
-            PacketBuffer.Clear();
+            packetBuffer.Clear();
             Reassembled = null;
             IsReassembled = false;
         }

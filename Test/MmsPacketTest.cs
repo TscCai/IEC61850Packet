@@ -183,7 +183,7 @@ namespace Test
         [TestMethod]
         public void BitString_Test()
         {
-            byte[] raw = {BerIdentifier.Encode(BerIdentifier.UNIVERSAL, BerIdentifier.PRIMITIVE,BerIdentifier.BIT_STRING)[0], 0x09,0x03, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xF8 };
+            byte[] raw = { 0x84, 0x0B, 0x05, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF ,0xE0};
             BitString bs = new BitString(new TLV(new ByteArraySegment(raw)));
             Console.WriteLine(bs.Value);
         }
@@ -191,7 +191,9 @@ namespace Test
         [TestMethod]
         public void ResovleDevice_Test()
         {
-            string captureFilename = @"..\..\CapturedFiles\20140813-150920_0005ED9B-50+60_MMS.pcap";
+          //  string captureFilename = @"..\..\CapturedFiles\20140813-150920_0005ED9B-50+60_MMS.pcap";
+            // string captureFilename = @"..\..\CapturedFiles\20140725-210910_00036E3E-20+20_RcdD05.pcap";
+            string captureFilename = @"..\..\CapturedFiles\20140826-113450-10+20_RcdD05_.pcap";
             ResolveDevice dev = new ResolveDevice(captureFilename);
             DateTime start = DateTime.Now;
             dev.Open();
