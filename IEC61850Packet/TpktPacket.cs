@@ -145,7 +145,6 @@ namespace IEC61850Packet
             }
             else
             {
-                // UNDONE: Maybe some refactor here: segs=payload
                 ByteArraySegment segs = new ByteArraySegment(payload.Bytes);
                 BuildSegments(segs, this.Length, segs.Length);
             }

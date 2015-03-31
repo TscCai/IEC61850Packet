@@ -22,7 +22,7 @@ namespace IEC61850Packet.Device
             get
             {
                 bool result = false;
-                if(pos<PacketCount)
+                if (pos < PacketCount)
                 {
                     result = true;
                 }
@@ -52,10 +52,8 @@ namespace IEC61850Packet.Device
             {
                 Packet p = Packet.ParsePacket(rawCapture.LinkLayerType, rawCapture.Data);
                 TcpPacket tcp = p.Extract<TcpPacket>();
-#if DEBUG
                 try
                 {
-#endif
                     if (tcp != null && tcp.PayloadData.Length > 0)
                     {
                         ExtractUpperPacket(tcp);
@@ -65,19 +63,21 @@ namespace IEC61850Packet.Device
                         // UNDONE: For GOOSE and SV or null TCP
                     }
 
-#if DEBUG
+
                 }
                 catch (Exception ex)
                 {
                     Console.WriteLine("No. {0}: {1}\nTPKT buffer count: {2}.", pos, ex.Message, tpktBuff.Reassembled.Count);
+#if DEBUG
                     Console.WriteLine(ex.StackTrace);
+#endif
                 }
                 finally
                 {
                     rawCapture = base.GetNextPacket();
                     pos++;
                 }
-#endif
+
             }
 
             // TODO: Reset the pos, raise the Opened Event
@@ -122,9 +122,8 @@ namespace IEC61850Packet.Device
                                     cotpBuff.Reset();
 
                                     #region For debug
-
-                                    MmsPacket mms = (MmsPacket)packets.Last().Extract(typeof(MmsPacket));
 #if DEBUG &&  SHOW_DETAILS
+                                    MmsPacket mms = (MmsPacket)packets.Last().Extract(typeof(MmsPacket));
                                     if (mms.Pdu is UnconfirmedPdu)
                                     {
                                         var pdu = mms.Pdu as UnconfirmedPdu;
