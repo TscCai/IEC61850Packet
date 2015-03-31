@@ -18,7 +18,6 @@ namespace IEC61850Packet
             DisconnectionRequest = 0x80,
             DataTransfer = 0xF0,
             ExpectedDataTransfer = 0x70
-
         }
 
         public TpduType Type { get; private set; }
@@ -28,7 +27,7 @@ namespace IEC61850Packet
         public bool LastDataUnit { get; private set; }
 
         static readonly byte TPDU_NUM_MASK = 0x7F;
-        static readonly byte LAST_DU_BIT= 7;
+        static readonly byte LAST_DU_BIT = 7;
 
         public CotpPacket() { }
 
@@ -36,7 +35,7 @@ namespace IEC61850Packet
         {
             this.ParentPacket = parent;
             header = bas;
-            
+
             header.Length = BigEndianBitConverter.Big.ToInt8(new ByteArraySegment(bas.Bytes, bas.Offset, 1).ActualBytes(), 0) +
                 CotpFileds.LengthLength;
             byte num_eot = header.ActualBytes()[CotpFileds.LengthLength + CotpFileds.PduTypeLength];
@@ -66,5 +65,20 @@ namespace IEC61850Packet
 
         }
 
+        public static bool IsCotp(byte[] header)
+        {
+            bool result = false;
+            int pos = 0;
+            int len = BigEndianBitConverter.Big.ToUInt8(header, pos);
+            if (len == header.Length - CotpFileds.LengthLength)
+            {
+                pos += CotpFileds.LengthLength;
+                if (Enum.IsDefined(typeof(TpduType), header[pos]))
+                {
+                    result = true;
+                }
+            }
+            return result;
+        }
     }
 }

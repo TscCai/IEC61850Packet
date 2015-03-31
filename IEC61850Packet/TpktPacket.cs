@@ -5,6 +5,7 @@ using System.Text;
 using PacketDotNet;
 using PacketDotNet.Utils;
 using MiscUtil.Conversion;
+using IEC61850Packet.Utils;
 
 namespace IEC61850Packet
 {
@@ -38,19 +39,20 @@ namespace IEC61850Packet
             }
             else
             {
-                this.header.Length = TpktFileds.TpktHeaderLength;
+                this.header.Length = TpktFileds.HeaderLength;
                 type = (TcpPacketType)(BigEndianBitConverter.Big.ToInt16(this.header.ActualBytes(), 0));
                 switch (type)
                 {
                     case TcpPacketType.Tpkt:
                         Length = BigEndianBitConverter.Big.ToInt16(this.header.ActualBytes(),
-                   TpktFileds.TpktHeaderVersionLength + TpktFileds.TpktHeaderReservedLength
+                   TpktFileds.VersionLength + TpktFileds.ReservedLength
                    );
                         ParseEncapsulatedBytes();
                         break;
                     default:    //// The payload of this packet is begin with a TPKT segment of previous one.
                         //int len = 0;// PreviousPacket.NextFrameSegmentLength;
                         //TcpSegments.Add(new ByteArraySegment(rawData, 0, len));
+
                         break;
                 }
             }
@@ -72,16 +74,34 @@ namespace IEC61850Packet
             ByteArraySegment payload;
             payload = this.header.EncapsulatedBytes();
             this.payloadPacketOrData = new PacketOrByteArraySegment();
-            if (payload.Length != Length - TpktFileds.TpktHeaderLength)
+            if (payload.Length > Length - TpktFileds.HeaderLength)
             {
-                BuildSegments(payload, Math.Min(Length - TpktFileds.TpktHeaderLength, payload.Length));
+                BuildSegments(payload, Math.Min(Length - TpktFileds.HeaderLength, payload.Length));
                 this.payloadPacketOrData.TheByteArraySegment = payload;
             }
-            else
+            else if (payload.Length == Length - TpktFileds.HeaderLength)
             {
                 HasSegments = false;
                 NextFrameSegmentLength = 0;
-                this.payloadPacketOrData.ThePacket = new CotpPacket(payload, this);
+                // TODO: Check if payload is COTP
+                byte[] header = payload.ActualBytes().Take(CotpFileds.HeaderLength).ToArray();
+                if (CotpPacket.IsCotp(header))
+                {
+                    this.payloadPacketOrData.ThePacket = new CotpPacket(payload, this);
+                }
+                else
+                {
+                    this.payloadPacketOrData.TheByteArraySegment = payload;
+                }
+
+            }
+            else
+            {
+                this.header.Length = 0;
+                this.payloadPacketOrData.TheByteArraySegment = this.header.EncapsulatedBytes();
+                payload = this.payloadPacketOrData.TheByteArraySegment;
+                BuildSegments(payload, payload.Length);
+                this.Length = 0;
             }
         }
 
@@ -99,26 +119,35 @@ namespace IEC61850Packet
             int segLen = payload.Length - length;
             payload.Length = length;
 
-
-            ByteArraySegment segs = payload.EncapsulatedBytes();
-            // The rest segments may be the next TPKT beginning which includes TPKT header.
-            //  var potentialHeader = segs;// new ByteArraySegment(segs);
-            //segs.Length = TpktFileds.TpktHeaderLength;
-            // segs may contain multiple TPKT segments
-            byte[] headerRawBytes = segs.ActualBytes().Take(TpktFileds.TpktHeaderLength).ToArray();
-
-            TcpPacketType type = (TcpPacketType)(BigEndianBitConverter.Big.ToInt16(headerRawBytes, 0));
-            switch (type)
+            if (segLen > 0)
             {
-                case TcpPacketType.Tpkt:
-                    // LastSegment = false;
-                    int tpktLen = BigEndianBitConverter.Big.ToInt16(headerRawBytes,
-                        TpktFileds.TpktHeaderReservedLength + TpktFileds.TpktHeaderVersionLength
-                        );
-                    BuildSegments(segs, tpktLen, segLen);
-                    break;
-                default:
-                    break;
+                ByteArraySegment segs = payload.EncapsulatedBytes();
+                // The rest segments may be the next TPKT beginning which includes TPKT header.
+                //  var potentialHeader = segs;// new ByteArraySegment(segs);
+                //segs.Length = TpktFileds.TpktHeaderLength;
+                // segs may contain multiple TPKT segments
+                byte[] headerRawBytes = segs.ActualBytes().Take(TpktFileds.HeaderLength).ToArray();
+
+                TcpPacketType type = (TcpPacketType)(BigEndianBitConverter.Big.ToInt16(headerRawBytes, 0));
+                switch (type)
+                {
+                    case TcpPacketType.Tpkt:
+                        // LastSegment = false;
+                        int tpktLen = BigEndianBitConverter.Big.ToInt16(headerRawBytes,
+                            TpktFileds.ReservedLength + TpktFileds.VersionLength
+                            );
+                        BuildSegments(segs, tpktLen, segLen);
+                        break;
+                    default:
+                        break;
+                }
+
+            }
+            else
+            {
+                // UNDONE: Maybe some refactor here: segs=payload
+                ByteArraySegment segs = new ByteArraySegment(payload.Bytes);
+                BuildSegments(segs, this.Length, segs.Length);
             }
         }
 
@@ -141,13 +170,13 @@ namespace IEC61850Packet
             }
             if (segLen > 0)
             {
-                byte[] potentialHeader = segs.ActualBytes().Take(TpktFileds.TpktHeaderLength).ToArray();
+                byte[] potentialHeader = segs.ActualBytes().Take(TpktFileds.HeaderLength).ToArray();
                 type = (TcpPacketType)(BigEndianBitConverter.Big.ToInt16(potentialHeader, 0));
                 switch (type)
                 {
                     case TcpPacketType.Tpkt:
                         int tpktLen = BigEndianBitConverter.Big.ToInt16(potentialHeader,
-                            TpktFileds.TpktHeaderReservedLength + TpktFileds.TpktHeaderVersionLength
+                            TpktFileds.ReservedLength + TpktFileds.VersionLength
                             );
                         // refresh the length value
                         //    segs.Length = segLen;
@@ -156,6 +185,10 @@ namespace IEC61850Packet
                     default:
                         break;
                 }
+            }
+            else
+            {
+                LastSegment = true;
             }
         }
 
@@ -183,16 +216,31 @@ namespace IEC61850Packet
                 LastSegment = true;     // The last segment of this frame is the last part of an integreted tpkt packet.
                 segs.Length = segLen;
                 TpktSegments.Add(new TpktSegment(segs, true));
-                //this.payloadPacketOrData.ThePacket = new CotpPacket(segs, this);
             }
             else // if (tpktLen < segLen)
             {
                 // Contains a integral TPKT and another one or more segment(s) succeed
                 segs.Length = tpktLen;
                 TpktSegments.Add(new TpktSegment(segs, true));
-                //this.payloadPacketOrData.ThePacket = new CotpPacket(segs, this);
                 BuildSegments(segs.EncapsulatedBytes(), false);
             }
+        }
+
+        public static bool IsTpkt(byte[] header)
+        {
+            bool result = false;
+            int pos = 0;
+            if (Enum.IsDefined(typeof(TcpPacketType), BigEndianBitConverter.Big.ToUInt16(header, pos)))
+            {
+                pos += TpktFileds.VersionLength + TpktFileds.ReservedLength;
+                int len = BigEndianBitConverter.Big.ToUInt16(header, 2);
+                if (len <= TpktFileds.MaxLength && len>0)
+                {
+                    result = true;
+                }
+
+            }
+            return result;
         }
 
     }

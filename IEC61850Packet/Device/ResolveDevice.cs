@@ -1,4 +1,5 @@
-﻿using System;
+﻿//#define SHOW_DETAILS
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -16,101 +17,143 @@ namespace IEC61850Packet.Device
     public class ResolveDevice : CaptureFileReaderDevice
     {
         public int PacketCount { get; private set; }
+        public bool HasNextPacket
+        {
+            get
+            {
+                bool result = false;
+                if(pos<PacketCount)
+                {
+                    result = true;
+                }
+                return result;
+            }
+        }
         public ResolveDevice(string captureFilename) : base(captureFilename) { }
-        List<Packet> packets;
+        List<Packet> packets = new List<Packet>();
+
+        TpktPacketBuffer tpktBuff;
+        CotpPacketBuffer cotpBuff;
+        int pos = 1;
         public override void Open()
         {
             base.Open();
 
-            int pcnt = 1;
+
             // var dev = new CaptureFileReaderDevice(@"..\..\CapturedFiles\20140813-150920_0005ED9B-50+60_MMS.pcap");
             // dev.Filter = "ip src 198.121.0.92 and tcp"; // 92 or 115
 
             RawCapture rawCapture;
-            packets = new List<Packet>();
-            TpktPacketBuffer tpktBuff;
-            CotpPacketBuffer cotpBuff;
+
+
             rawCapture = base.GetNextPacket();
 
             while (rawCapture != null)
             {
                 Packet p = Packet.ParsePacket(rawCapture.LinkLayerType, rawCapture.Data);
                 TcpPacket tcp = p.Extract<TcpPacket>();
-                if (tcp != null && tcp.PayloadData.Length > 0)
+#if DEBUG
+                try
                 {
-                    TpktFileds tf = new TpktFileds();
-                    string srcIp = tcp.ParentPacket<IPv4Packet>().SourceAddress.ToString();
-                    tpktBuff = TpktPacketBufferFactory.GetBuffer(srcIp);
-                    if (tpktBuff.Count > 0 && !tpktBuff.IsReassembled)
+#endif
+                    if (tcp != null && tcp.PayloadData.Length > 0)
                     {
-                        tf.LeadWithSegment = true;
-                        tf.LeadingSegmentLength = tpktBuff.Last.NextFrameSegmentLength;
+                        ExtractUpperPacket(tcp);
                     }
-                    TpktPacket tpkt = new TpktPacket(tcp.PayloadData, tcp, tf);
-                    if (tpkt.PayloadPacket != null || tpkt.PayloadData != null)
+                    else
                     {
-                        tpktBuff.Add(tpkt);
-                        if (tpktBuff.IsReassembled)
-                        {
-                            foreach (TpktPacket reassTpkt in tpktBuff.Reassembled)
-                            {
-                                CotpPacket cotp = reassTpkt.Extract<CotpPacket>();
-                                if (cotp.Type == CotpPacket.TpduType.DataTransfer)
-                                {
-                                    cotpBuff = CotpPacketBufferFactory.GetBuffer(srcIp);
-                                    cotpBuff.Add(cotp);
-                                    if (cotpBuff.IsReassembled)
-                                    {
-                                        CotpPacket reassCotp = cotpBuff.Reassembled;
-#if DEBUG
-                                    try
-                                    {
-#endif
-                                        packets.Add(new OsiSessionPacket(reassCotp.PayloadData, reassCotp));
-#if DEBUG
-                                    }
-                                    catch (Exception ex)
-                                    {
-                                        Console.WriteLine("Packet count: {0}",pcnt);
-                                        Console.WriteLine(ex.StackTrace);
-                                        throw ex;
-                                    }
-#endif
-                                        cotpBuff.Reset();
+                        // UNDONE: For GOOSE and SV or null TCP
+                    }
 
-                                        #region For debug
 #if DEBUG
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine("No. {0}: {1}\nTPKT buffer count: {2}.", pos, ex.Message, tpktBuff.Reassembled.Count);
+                    Console.WriteLine(ex.StackTrace);
+                }
+                finally
+                {
+                    rawCapture = base.GetNextPacket();
+                    pos++;
+                }
+#endif
+            }
+
+            // TODO: Reset the pos, raise the Opened Event
+            pos = 0;
+            PacketCount = packets.Count;
+        }
+
+        private void ExtractUpperPacket(TcpPacket tcp)
+        {
+
+            TpktFileds tf = new TpktFileds();
+            string srcIp = tcp.ParentPacket<IPv4Packet>().SourceAddress.ToString();
+            tpktBuff = TpktPacketBufferFactory.GetBuffer(srcIp);
+            if (tpktBuff.Count > 0 && !tpktBuff.IsReassembled)
+            {
+                tf.LeadWithSegment = true;
+                tf.LeadingSegmentLength = tpktBuff.Last.NextFrameSegmentLength;
+            }
+
+            byte[] header = tcp.PayloadData.Take(TpktFileds.HeaderLength).ToArray();
+            if (tf.LeadWithSegment || TpktPacket.IsTpkt(header))
+            {
+                TpktPacket tpkt = new TpktPacket(tcp.PayloadData, tcp, tf);
+                if (tpkt.PayloadPacket != null || tpkt.PayloadData != null)
+                {
+                    tpktBuff.Add(tpkt);
+                    if (tpktBuff.IsReassembled)
+                    {
+                        foreach (TpktPacket reassTpkt in tpktBuff.Reassembled)
+                        {
+                            CotpPacket cotp = reassTpkt.Extract<CotpPacket>();
+                            if (cotp.Type == CotpPacket.TpduType.DataTransfer)
+                            {
+                                cotpBuff = CotpPacketBufferFactory.GetBuffer(srcIp);
+                                cotpBuff.Add(cotp);
+                                if (cotpBuff.IsReassembled)
+                                {
+                                    CotpPacket reassCotp = cotpBuff.Reassembled;
+
+                                    packets.Add(new OsiSessionPacket(reassCotp.PayloadData, reassCotp));
+
+                                    cotpBuff.Reset();
+
+                                    #region For debug
+
                                     MmsPacket mms = (MmsPacket)packets.Last().Extract(typeof(MmsPacket));
+#if DEBUG &&  SHOW_DETAILS
                                     if (mms.Pdu is UnconfirmedPdu)
                                     {
                                         var pdu = mms.Pdu as UnconfirmedPdu;
                                         string dsRef = pdu.Service.InformationReport.ListOfAccessResult[3].Success.GetValue<IEC61850Packet.Asn1.Types.VisibleString>().Value;
-                                        Console.WriteLine("No. {0}: {1}",pcnt,dsRef);
+                                        Console.WriteLine("No. {0}: {1}", pcnt, dsRef);
                                     }
 #endif
-                                        #endregion
-                                    }
-
+                                    #endregion
                                 }
+
                             }
-                            tpktBuff.Reset();
                         }
+                        tpktBuff.Reset();
                     }
                 }
-                else
-                {
-                    // For GOOSE and SV
-
-                }
-                rawCapture = base.GetNextPacket();
-                pcnt++;
             }
 
-
         }
+
         public new Packet GetNextPacket()
         {
-            return null;
+            if (pos <= PacketCount)
+            {
+                return packets[pos++];
+            }
+            else
+            {
+                throw new InvalidOperationException("No more packets.");
+            }
         }
     }
 }

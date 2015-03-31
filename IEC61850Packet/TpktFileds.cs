@@ -7,12 +7,11 @@ namespace IEC61850Packet
 {
     public struct TpktFileds
     {
-        public static readonly int TpktHeaderLength = 4 ;    // Include Version, reserved, length
-
-        public static readonly int TpktHeaderVersionLength = 1;
-        public static readonly int TpktHeaderReservedLength = 1;
-
-        public static readonly int TpktLengthLength = 2;
+        public static readonly int VersionLength = 1;
+        public static readonly int ReservedLength = 1;
+        public static readonly int LengthLength = 2;
+        public static readonly int HeaderLength = VersionLength+ReservedLength+LengthLength;    // Include Version, reserved, length
+        public static readonly int MaxLength = 0x0404;
 
         public bool LeadWithSegment;
         public int LeadingSegmentLength;
