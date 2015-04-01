@@ -8,9 +8,8 @@ using SharpPcap;
 using SharpPcap.LibPcap;
 using IEC61850Packet.Utils;
 using IEC61850Packet.Goose;
-#if DEBUG
 using IEC61850Packet.Mms;
-#endif
+
 
 namespace IEC61850Packet.Device
 {
@@ -31,6 +30,7 @@ namespace IEC61850Packet.Device
         }
         public ResolveDevice(string captureFilename) : base(captureFilename) { }
         List<Packet> packets = new List<Packet>();
+        List<Type> packetTypes = new List<Type>();
         
         TpktPacketBuffer tpktBuff;
         CotpPacketBuffer cotpBuff;
@@ -118,9 +118,20 @@ namespace IEC61850Packet.Device
                                 if (cotpBuff.IsReassembled)
                                 {
                                     CotpPacket reassCotp = cotpBuff.Reassembled;
-
-                                    packets.Add(new OsiSessionPacket(reassCotp.PayloadData, reassCotp));
-
+                                    var session = new OsiSessionPacket(reassCotp.PayloadData, reassCotp);
+                                    //packets.Add();
+                                    var mms = session.Extract<MmsPacket>();
+                                    if(mms!=null)
+                                    {
+                                        packets.Add(mms);
+                                        packetTypes.Add(typeof(MmsPacket));
+                                    }
+                                    else
+                                    {
+                                        packets.Add(session);
+                                        packetTypes.Add(typeof(OsiSessionPacket));
+                                    }
+                                    
                                     cotpBuff.Reset();
 
                                     #region For debug
@@ -152,7 +163,8 @@ namespace IEC61850Packet.Device
                 case EthernetPacketType.Goose:
                     ether.PayloadPacket = new GoosePacket(ether.PayloadData, ether);
                     int len = ether.PayloadPacket.Extract<GoosePacket>().APDU.Bytes.Length;
-                    packets.Add(ether);
+                    packets.Add(ether.PayloadPacket);
+                    packetTypes.Add(typeof(GoosePacket));
                     break;
                 case EthernetPacketType.Sv:
                     // UNDONE: SV construct
@@ -177,6 +189,11 @@ namespace IEC61850Packet.Device
             {
                 throw new InvalidOperationException("No more packets.");
             }
+        }
+
+        public Type GetPacketType()
+        {
+            return packetTypes[currentPacketIndex];
         }
     
     }

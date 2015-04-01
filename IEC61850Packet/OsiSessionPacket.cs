@@ -22,6 +22,7 @@ namespace IEC61850Packet
 
         public OsiSessionPacket(byte[] rawData, Packet parent)
         {
+            
             this.ParentPacket = parent;
             int offset = 0;
             header = new ByteArraySegment(rawData);
@@ -63,6 +64,7 @@ namespace IEC61850Packet
                     var payload = header.EncapsulatedBytes();
                     payloadPacketOrData = new PacketOrByteArraySegment();
                     payloadPacketOrData.ThePacket = new OsiPresentationPacket(payload, this);
+                    parent.PayloadPacket = this;
                 }
             }
         }
