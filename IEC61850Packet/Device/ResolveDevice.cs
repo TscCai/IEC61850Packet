@@ -1,5 +1,4 @@
-﻿//#define SHOW_DETAILS
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,9 +7,9 @@ using PacketDotNet;
 using SharpPcap;
 using SharpPcap.LibPcap;
 using IEC61850Packet.Utils;
+using IEC61850Packet.Goose;
 #if DEBUG
 using IEC61850Packet.Mms;
-using IEC61850Packet.Goose;
 #endif
 
 namespace IEC61850Packet.Device
@@ -23,7 +22,7 @@ namespace IEC61850Packet.Device
             get
             {
                 bool result = false;
-                if (pos < PacketCount)
+                if (currentPacketIndex < PacketCount)
                 {
                     result = true;
                 }
@@ -32,21 +31,17 @@ namespace IEC61850Packet.Device
         }
         public ResolveDevice(string captureFilename) : base(captureFilename) { }
         List<Packet> packets = new List<Packet>();
-
+        
         TpktPacketBuffer tpktBuff;
         CotpPacketBuffer cotpBuff;
-        int pos = 1;
+        int currentPacketIndex = 1;
         public override void Open()
         {
             base.Open();
-
-
             // var dev = new CaptureFileReaderDevice(@"..\..\CapturedFiles\20140813-150920_0005ED9B-50+60_MMS.pcap");
             // dev.Filter = "ip src 198.121.0.92 and tcp"; // 92 or 115
 
             RawCapture rawCapture;
-
-
             rawCapture = base.GetNextPacket();
 
             while (rawCapture != null)
@@ -57,20 +52,24 @@ namespace IEC61850Packet.Device
                     TcpPacket tcp = p.Extract<TcpPacket>();
                     if (tcp != null && tcp.PayloadData.Length > 0)
                     {
+#if MMS
                         ExtractUpperPacket(tcp);
+#endif
                     }
                     else
                     {
                         // UNDONE: For GOOSE and SV or null TCP
+#if GOOSE
                         EthernetPacket ether = p.Extract<EthernetPacket>();
                         ExtractEthernetPacket(ether);
+#endif
                     }
 
 
                 }
                 catch (Exception ex)
                 {
-                    Console.WriteLine("No. {0}: {1}\nTPKT buffer count: {2}.", pos, ex.Message, tpktBuff.Reassembled.Count);
+                    Console.WriteLine("No. {0}: {1}\nTPKT buffer count: {2}.", currentPacketIndex, ex.Message, tpktBuff.Reassembled.Count);
 #if DEBUG
                     Console.WriteLine(ex.StackTrace);
 #endif
@@ -78,13 +77,13 @@ namespace IEC61850Packet.Device
                 finally
                 {
                     rawCapture = base.GetNextPacket();
-                    pos++;
+                    currentPacketIndex++;
                 }
 
             }
 
             // TODO: Reset the pos, raise the Opened Event
-            pos = 0;
+            currentPacketIndex = 0;
             PacketCount = packets.Count;
         }
 
@@ -131,7 +130,7 @@ namespace IEC61850Packet.Device
                                     {
                                         var pdu = mms.Pdu as UnconfirmedPdu;
                                         string dsRef = pdu.Service.InformationReport.ListOfAccessResult[3].Success.GetValue<IEC61850Packet.Asn1.Types.VisibleString>().Value;
-                                        Console.WriteLine("No. {0}: {1}", pcnt, dsRef);
+                                        Console.WriteLine("No. {0}: {1}", currentPacketIndex, dsRef);
                                     }
 #endif
                                     #endregion
@@ -148,37 +147,37 @@ namespace IEC61850Packet.Device
 
         private void ExtractEthernetPacket(EthernetPacket ether)
         {
-            if(ether.Type==EthernetPacketType.None)
+            switch (ether.Type)
             {
-                EthernetPacketTypeEx type = (EthernetPacketTypeEx)ether.Type;
-                switch (type)
-                {
-                    case EthernetPacketTypeEx.Goose:
-                        ether.PayloadPacket = new GoosePacket(ether.PayloadData,ether);
-                        break;
-                    case EthernetPacketTypeEx.Sv:
-                        // UNDONE: SV construct
-                        break;
-                    case EthernetPacketTypeEx.Gse:
-                        break;
-                    default:
-                        // Unknown packet
-                        break;
-                }
+                case EthernetPacketType.Goose:
+                    ether.PayloadPacket = new GoosePacket(ether.PayloadData, ether);
+                    int len = ether.PayloadPacket.Extract<GoosePacket>().APDU.Bytes.Length;
+                    packets.Add(ether);
+                    break;
+                case EthernetPacketType.Sv:
+                    // UNDONE: SV construct
+                    // packets.Add(ether);
+                    break;
+                case EthernetPacketType.Gse:
+                    break;
+                default:
+                    // Unknown packet
+                    break;
             }
-            
+           
         }
 
         public new Packet GetNextPacket()
         {
-            if (pos <= PacketCount)
+            if (currentPacketIndex <= PacketCount)
             {
-                return packets[pos++];
+                return packets[currentPacketIndex++];
             }
             else
             {
                 throw new InvalidOperationException("No more packets.");
             }
         }
+    
     }
 }

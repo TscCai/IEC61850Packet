@@ -62,18 +62,18 @@ namespace IEC61850Packet.Asn1
                 len += cnt;
                 result = new byte[len];
 
-            }
-
-            result[0] = (byte)(type | structure | MAX_SINGLE_OCTET_TAG_CODE);
-            result[result.Length - 1] = (byte)(code & ~(1 << VALID_SUCCEED_OCTET_BIT_CNT));
-            code >>= VALID_SUCCEED_OCTET_BIT_CNT;
-
-            for (int i = result.Length - 2; i >= 0; i--)
-            {
-                result[i] = (byte)(0x80 | (code & ~(1 << VALID_SUCCEED_OCTET_BIT_CNT)));
+                result[0] = (byte)(type | structure | MAX_SINGLE_OCTET_TAG_CODE);
+                result[result.Length - 1] = (byte)(code & ~(1 << VALID_SUCCEED_OCTET_BIT_CNT));
                 code >>= VALID_SUCCEED_OCTET_BIT_CNT;
+
+                for (int i = result.Length - 2; i >= 0; i--)
+                {
+                    result[i] = (byte)(0x80 | (code & ~(1 << VALID_SUCCEED_OCTET_BIT_CNT)));
+                    code >>= VALID_SUCCEED_OCTET_BIT_CNT;
+                }
+
             }
-            return result;
+         return result;
 
         }
     }

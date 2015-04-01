@@ -17,7 +17,7 @@
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>TRACE;DEBUG</DefineConstants>
+    <DefineConstants>TRACE;DEBUG;MMS GOOSE SV _SHOW_DETAILS</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <DocumentationFile>
@@ -27,18 +27,18 @@
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
+    <DefineConstants>TRACE;MMS GOOSE SV _SHOW_DETAILS</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="PacketDotNet, Version=0.13.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>lib\PacketDotNet.dll</HintPath>
+      <HintPath>..\Library\PacketDotNet.dll</HintPath>
     </Reference>
     <Reference Include="SharpPcap, Version=4.2.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>lib\SharpPcap.dll</HintPath>
+      <HintPath>..\Library\SharpPcap.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -56,15 +56,8 @@
     <Compile Include="CotpPacketBufferFactory.cs" />
     <Compile Include="EthernetPacketTypeEx.cs" />
     <Compile Include="Goose\Apdu.cs" />
-    <Compile Include="Goose\ASN1TypeMapping.cs" />
-    <Compile Include="Goose\BadArgumentException.cs" />
-    <Compile Include="Goose\ByteArrayEx.cs" />
-    <Compile Include="Goose\EndiannessHelper.cs" />
-    <Compile Include="Goose\EntherTypeMapping.cs" />
     <Compile Include="Goose\GoosePacket.cs" />
-    <None Include="Goose\GOOSEReader.cs" />
-    <Compile Include="Goose\MACHeader.cs" />
-    <Compile Include="Goose\TLV.cs" />
+    <Compile Include="Goose\GooseFileds.cs" />
     <Compile Include="TpktPacketBufferFactory.cs" />
     <Compile Include="Mms\Types\FloatPoint.cs" />
     <Compile Include="Mms\Types\Structure.cs" />

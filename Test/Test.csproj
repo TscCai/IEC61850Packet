@@ -35,11 +35,13 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="PacketDotNet">
-      <HintPath>..\IEC61850Packet\lib\PacketDotNet.dll</HintPath>
+    <Reference Include="PacketDotNet, Version=0.13.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Library\PacketDotNet.dll</HintPath>
     </Reference>
-    <Reference Include="SharpPcap">
-      <HintPath>..\IEC61850Packet\lib\SharpPcap.dll</HintPath>
+    <Reference Include="SharpPcap, Version=4.2.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Library\SharpPcap.dll</HintPath>
     </Reference>
     <Reference Include="System" />
   </ItemGroup>
@@ -65,6 +67,9 @@
       <Project>{56d266a7-cf86-4939-a974-2795d8c7ab54}</Project>
       <Name>IEC61850Packet</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="CapturedFiles\" />
   </ItemGroup>
   <Choose>
     <When Condition="'$(VisualStudioVersion)' == '10.0' And '$(IsCodedUITest)' == 'True'">
