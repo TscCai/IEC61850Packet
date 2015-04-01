@@ -12,7 +12,7 @@ using IEC61850Packet.Asn1.Types;
 using TAsn1 = IEC61850Packet.Asn1.Types;
 using IEC61850Packet.Mms;
 
-namespace IEC61850Packet
+namespace IEC61850Packet.Acsi
 {
     public class AcsiMapping
     {

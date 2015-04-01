@@ -49,22 +49,32 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AcsiMapping.cs" />
-    <Compile Include="Asn1\Asn_1.cs" />
+    <Compile Include="Acsi\AcsiMapping.cs" />
     <Compile Include="Asn1\BerIdentifier.cs" />
     <Compile Include="Asn1\Types\Boolean.cs" />
     <Compile Include="CotpPacketBuffer.cs" />
     <Compile Include="CotpPacketBufferFactory.cs" />
+    <Compile Include="EthernetPacketTypeEx.cs" />
+    <Compile Include="Goose\Apdu.cs" />
+    <Compile Include="Goose\ASN1TypeMapping.cs" />
+    <Compile Include="Goose\BadArgumentException.cs" />
+    <Compile Include="Goose\ByteArrayEx.cs" />
+    <Compile Include="Goose\EndiannessHelper.cs" />
+    <Compile Include="Goose\EntherTypeMapping.cs" />
+    <Compile Include="Goose\GoosePacket.cs" />
+    <None Include="Goose\GOOSEReader.cs" />
+    <Compile Include="Goose\MACHeader.cs" />
+    <Compile Include="Goose\TLV.cs" />
     <Compile Include="TpktPacketBufferFactory.cs" />
     <Compile Include="Mms\Types\FloatPoint.cs" />
     <Compile Include="Mms\Types\Structure.cs" />
     <Compile Include="Mms\Types\TimeOfDay.cs" />
     <Compile Include="Asn1\Types\VisibleString.cs" />
-    <Compile Include="Mms\Enum\AccessResultFileds.cs" />
+    <Compile Include="Mms\Enum\AccessResultType.cs" />
     <Compile Include="Mms\Enum\ObjectNameType.cs" />
     <Compile Include="Asn1\Types\BasicType.cs" />
     <Compile Include="Mms\Types\Data.cs" />
-    <Compile Include="Mms\Types\Domain_Specific.cs" />
+    <Compile Include="Mms\Types\DomainSpecific.cs" />
     <Compile Include="Mms\Types\ListOfAccessResult.cs" />
     <Compile Include="Mms\Types\ListOfVariable.cs" />
     <Compile Include="Mms\Types\ObjectName.cs" />
@@ -103,8 +113,8 @@
     <Compile Include="OsiSessionPacket.cs" />
     <Compile Include="OsiSessionPdu.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="ReasonCodeType.cs" />
-    <Compile Include="ReportedOptFldsType.cs" />
+    <Compile Include="Acsi\ReasonCodeType.cs" />
+    <Compile Include="Acsi\ReportedOptFldsType.cs" />
     <Compile Include="Device\ResolveDevice.cs" />
     <Compile Include="TcpPacketType.cs" />
     <Compile Include="TpktFileds.cs" />
@@ -120,6 +130,9 @@
     <Content Include="lib\PacketDotNet.xml" />
     <Content Include="lib\SharpPcap.dll" />
     <Content Include="lib\SharpPcap.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Sv\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

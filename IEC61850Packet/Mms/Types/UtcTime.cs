@@ -17,7 +17,7 @@ namespace IEC61850Packet.Mms.Types
         static readonly DateTime baseline = new DateTime(1970, 1, 1);
         public UtcTime()
         {
-            this.Identifier = BerIdentifier.Encode(BerIdentifier.CONTEXT_SPECIFIC,BerIdentifier.PRIMITIVE,17);
+            this.Identifier = BerIdentifier.Encode(BerIdentifier.ContextSpecific,BerIdentifier.Primitive,17);
         }
 
         public UtcTime(TLV tlv)

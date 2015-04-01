@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace IEC61850Packet.Mms
 {
-    public class Domain_Specific:ObjectName
+    public class DomainSpecific:ObjectName
     {
         public string DomainId { get; set; }
         public string ItemId { get; set; }

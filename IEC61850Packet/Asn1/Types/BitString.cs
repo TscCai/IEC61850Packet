@@ -14,7 +14,7 @@ namespace IEC61850Packet.Asn1.Types
         //static readonly int SIZE_OF_LONG = sizeof(long);
         static readonly int SIZE_OF_ULONG = sizeof(ulong);
         public string Value { get; set; }
-        public BitString() { this.Identifier = BerIdentifier.Encode(BerIdentifier.UNIVERSAL, BerIdentifier.PRIMITIVE, BerIdentifier.BIT_STRING); }
+        public BitString() { this.Identifier = BerIdentifier.Encode(BerIdentifier.Universal, BerIdentifier.Primitive, BerIdentifier.BitString); }
 
         public BitString(TLV tlv)
             : this()

@@ -14,7 +14,7 @@ namespace IEC61850Packet.Mms.Types
         public new double Value { get; set; }
         public FloatPoint() 
         {
-            this.Identifier = BerIdentifier.Encode(BerIdentifier.CONTEXT_SPECIFIC, BerIdentifier.PRIMITIVE, 12);
+            this.Identifier = BerIdentifier.Encode(BerIdentifier.ContextSpecific, BerIdentifier.Primitive, 12);
         }
         public FloatPoint(TLV tlv):this()
         {

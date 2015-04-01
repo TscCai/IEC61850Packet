@@ -18,7 +18,7 @@ namespace IEC61850Packet.Mms.Types
         public List<Data.VariableType> Types { get; private set; }
         public Structure()
         {
-            this.Identifier = BerIdentifier.Encode(BerIdentifier.CONTEXT_SPECIFIC, BerIdentifier.CONSTRUCTED, 2);
+            this.Identifier = BerIdentifier.Encode(BerIdentifier.ContextSpecific, BerIdentifier.Constructed, 2);
             Values = new List<object>();
             Types = new List<Data.VariableType>();
         }

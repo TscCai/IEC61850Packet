@@ -20,8 +20,8 @@ namespace IEC61850Packet.Mms
         public InformationReport()
         {
             // According to MMS defination
-            this.Identifier = BerIdentifier.Encode(BerIdentifier.CONTEXT_SPECIFIC, BerIdentifier.CONSTRUCTED, 0);
-            this.ListOfAccessResultId = BerIdentifier.Encode(BerIdentifier.CONTEXT_SPECIFIC, BerIdentifier.CONSTRUCTED, 0);
+            this.Identifier = BerIdentifier.Encode(BerIdentifier.ContextSpecific, BerIdentifier.Constructed, 0);
+            this.ListOfAccessResultId = BerIdentifier.Encode(BerIdentifier.ContextSpecific, BerIdentifier.Constructed, 0);
         }
 
         public InformationReport(ByteArraySegment bas)

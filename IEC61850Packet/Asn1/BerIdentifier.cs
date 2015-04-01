@@ -7,35 +7,35 @@ namespace IEC61850Packet.Asn1
 {
     public class BerIdentifier
     {
-        public static readonly byte UNIVERSAL = 0x00;
-        public static readonly byte APPLICATION = 0x40;
-        public static readonly byte CONTEXT_SPECIFIC = 0x80;
+        public static byte Universal { get { return 0x00; } }
+        public static byte Application { get { return 0x40; } }
+        public static byte ContextSpecific { get { return 0x80; } }
 
-        public static readonly byte PRIMITIVE = 0x00;
-        public static readonly byte CONSTRUCTED = 0x20;
+        public static byte Primitive { get { return 0x00; } }
+        public static byte Constructed { get { return 0x20; } }
 
-        public static readonly byte BOOLEAN = 1;
-        public static readonly byte INTEGER = 2;
-        public static readonly byte BIT_STRING = 3;
-        public static readonly byte OCTET_STRING = 4;
-        public static readonly byte NULL = 5;
-        public static readonly byte OBJECT_IDENTIFIER = 6;
-        public static readonly byte REAL = 9;
-        public static readonly byte ENUMERATED = 10;
-        public static readonly byte UTF8_STRING = 12;
-        public static readonly byte NUMERIC_STRING = 18;
-        public static readonly byte PRINTABLE_STRING = 19;
-        public static readonly byte TELETEX_STRING = 20;
-        public static readonly byte VIDEOTEX_STRING = 21;
-        public static readonly byte IA5_STRING = 22;
-        public static readonly byte GENERALIZED_TIME = 24;
-        public static readonly byte GRAPHIC_STRING = 25;
-        public static readonly byte VISIBLE_STRING = 26;
-        public static readonly byte GENERAL_STRING = 27;
-        public static readonly byte UNIVERSAL_STRING = 28;
-        public static readonly byte BMP_STRING = 30;
+        public static byte Boolean { get { return 1; } }
+        public static byte Integer { get { return 2; } }
+        public static byte BitString { get { return 3; } }
+        public static byte OctetString { get { return 4; } }
+        public static byte Null { get { return 5; } }
+        public static byte ObjectIdentifier { get { return 6; } }
+        public static byte Real { get { return 9; } }
+        public static byte Enumerated { get { return 10; } }
+        public static byte Utf8String { get { return 12; } }
+        public static byte NumericString { get { return 18; } }
+        public static byte PrintableString { get { return 19; } }
+        public static byte TeletexString { get { return 20; } }
+        public static byte VideotexString { get { return 21; } }
+        public static byte Ia5String { get { return 22; } }
+        public static byte GeneralizedTime { get { return 24; } }
+        public static byte GraphicString { get { return 25; } }
+        public static byte VisibleString { get { return 26; } }
+        public static byte GeneralString { get { return 27; } }
+        public static byte UniversalString { get { return 28; } }
+        public static byte BmpString { get { return 30; } }
 
-        static readonly byte MAX_SINGLE_OCTET_TAG_CODE = 0x1F;
+        static readonly byte MAX_SINGLE_OCTET_TAG_CODE =0x1F;
         static readonly byte VALID_SUCCEED_OCTET_BIT_CNT = 7;
 
         /// <summary>
@@ -64,7 +64,7 @@ namespace IEC61850Packet.Asn1
 
             }
 
-            result[0] = (byte)(type | structure|MAX_SINGLE_OCTET_TAG_CODE);
+            result[0] = (byte)(type | structure | MAX_SINGLE_OCTET_TAG_CODE);
             result[result.Length - 1] = (byte)(code & ~(1 << VALID_SUCCEED_OCTET_BIT_CNT));
             code >>= VALID_SUCCEED_OCTET_BIT_CNT;
 

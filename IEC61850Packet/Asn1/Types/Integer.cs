@@ -12,7 +12,7 @@ namespace IEC61850Packet.Asn1.Types
         public  int Value { get; set; }
         public Integer()
         {
-            this.Identifier = BerIdentifier.Encode(BerIdentifier.UNIVERSAL, BerIdentifier.PRIMITIVE, BerIdentifier.INTEGER);
+            this.Identifier = BerIdentifier.Encode(BerIdentifier.Universal, BerIdentifier.Primitive, BerIdentifier.Integer);
         }
 
         public Integer(TLV tlv):this()

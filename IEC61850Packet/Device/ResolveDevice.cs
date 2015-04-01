@@ -10,6 +10,7 @@ using SharpPcap.LibPcap;
 using IEC61850Packet.Utils;
 #if DEBUG
 using IEC61850Packet.Mms;
+using IEC61850Packet.Goose;
 #endif
 
 namespace IEC61850Packet.Device
@@ -51,9 +52,9 @@ namespace IEC61850Packet.Device
             while (rawCapture != null)
             {
                 Packet p = Packet.ParsePacket(rawCapture.LinkLayerType, rawCapture.Data);
-                TcpPacket tcp = p.Extract<TcpPacket>();
                 try
                 {
+                    TcpPacket tcp = p.Extract<TcpPacket>();
                     if (tcp != null && tcp.PayloadData.Length > 0)
                     {
                         ExtractUpperPacket(tcp);
@@ -61,6 +62,8 @@ namespace IEC61850Packet.Device
                     else
                     {
                         // UNDONE: For GOOSE and SV or null TCP
+                        EthernetPacket ether = p.Extract<EthernetPacket>();
+                        ExtractEthernetPacket(ether);
                     }
 
 
@@ -141,6 +144,29 @@ namespace IEC61850Packet.Device
                 }
             }
 
+        }
+
+        private void ExtractEthernetPacket(EthernetPacket ether)
+        {
+            if(ether.Type==EthernetPacketType.None)
+            {
+                EthernetPacketTypeEx type = (EthernetPacketTypeEx)ether.Type;
+                switch (type)
+                {
+                    case EthernetPacketTypeEx.Goose:
+                        ether.PayloadPacket = new GoosePacket(ether.PayloadData,ether);
+                        break;
+                    case EthernetPacketTypeEx.Sv:
+                        // UNDONE: SV construct
+                        break;
+                    case EthernetPacketTypeEx.Gse:
+                        break;
+                    default:
+                        // Unknown packet
+                        break;
+                }
+            }
+            
         }
 
         public new Packet GetNextPacket()

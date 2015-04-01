@@ -12,7 +12,7 @@ namespace IEC61850Packet.Asn1.Types
         public bool Value { get; private set; }
 
 
-        public Boolean() { this.Identifier = BerIdentifier.Encode(BerIdentifier.UNIVERSAL, BerIdentifier.PRIMITIVE, BerIdentifier.BOOLEAN); }
+        public Boolean() { this.Identifier = BerIdentifier.Encode(BerIdentifier.Universal, BerIdentifier.Primitive, BerIdentifier.Boolean); }
         public Boolean(TLV tlv):this()
         {
             int len = tlv.Length.Value;

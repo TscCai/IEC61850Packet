@@ -17,7 +17,7 @@ namespace IEC61850Packet.Mms
         public UnconfirmedPdu()
         {
             // According to the MMS standard's defination.
-            this.Identifier = BerIdentifier.Encode(BerIdentifier.CONTEXT_SPECIFIC, BerIdentifier.CONSTRUCTED, 3);
+            this.Identifier = BerIdentifier.Encode(BerIdentifier.ContextSpecific, BerIdentifier.Constructed, 3);
         }
 
         public UnconfirmedPdu(ByteArraySegment bas, TLV parent)

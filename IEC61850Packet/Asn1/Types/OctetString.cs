@@ -9,7 +9,7 @@ namespace IEC61850Packet.Asn1.Types
     public class OctetString:BasicType
     {
         public virtual string Value { get; set; }
-        public OctetString() { this.Identifier = BerIdentifier.Encode(BerIdentifier.UNIVERSAL,BerIdentifier.PRIMITIVE,BerIdentifier.OCTET_STRING); }
+        public OctetString() { this.Identifier = BerIdentifier.Encode(BerIdentifier.Universal,BerIdentifier.Primitive,BerIdentifier.OctetString); }
         public OctetString(TLV tlv):this()
         {
             Value = BitConverter.ToString(tlv.Value.RawBytes, 0);

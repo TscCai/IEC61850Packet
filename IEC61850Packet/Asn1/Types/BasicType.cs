@@ -14,6 +14,5 @@ namespace IEC61850Packet.Asn1.Types
 
         protected byte[] Identifier { get; set; }
 
-
     }
 }

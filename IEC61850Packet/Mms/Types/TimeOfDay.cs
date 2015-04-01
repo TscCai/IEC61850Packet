@@ -16,7 +16,7 @@ namespace IEC61850Packet.Mms.Types
         public new DateTime Value { get; private set; }
         public TimeOfDay()
         {
-            this.Identifier = BerIdentifier.Encode(BerIdentifier.CONTEXT_SPECIFIC,BerIdentifier.PRIMITIVE,12);
+            this.Identifier = BerIdentifier.Encode(BerIdentifier.ContextSpecific,BerIdentifier.Primitive,12);
         }
 
         public TimeOfDay(TLV tlv):this()

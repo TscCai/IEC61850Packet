@@ -10,7 +10,7 @@ namespace IEC61850Packet.Asn1.Types
     public class VisibleString:BasicType
     {
         public string Value { get; private set; }
-        public VisibleString() { this.Identifier = BerIdentifier.Encode(BerIdentifier.UNIVERSAL,BerIdentifier.PRIMITIVE,BerIdentifier.VISIBLE_STRING); }
+        public VisibleString() { this.Identifier = BerIdentifier.Encode(BerIdentifier.Universal,BerIdentifier.Primitive,BerIdentifier.VisibleString); }
 
         public VisibleString(TLV tlv):this()
         {

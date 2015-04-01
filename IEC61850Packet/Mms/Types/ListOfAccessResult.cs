@@ -11,7 +11,7 @@ namespace IEC61850Packet.Mms.Types
     public class ListOfAccessResult:BasicType
     {
 
-        public ListOfAccessResult() { this.Identifier = BerIdentifier.Encode(BerIdentifier.CONTEXT_SPECIFIC, BerIdentifier.CONSTRUCTED, 0); }
+        public ListOfAccessResult() { this.Identifier = BerIdentifier.Encode(BerIdentifier.ContextSpecific, BerIdentifier.Constructed, 0); }
 
     }
 }

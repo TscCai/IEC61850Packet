@@ -15,15 +15,15 @@ namespace IEC61850Packet.Mms
 {
     public class AccessResult:BasicType
     {
-        public AccessResultFileds AvaliableField { get; private set; }
+        public AccessResultType AvaliableField { get; private set; }
         public Data Success { get; set; }
         public TAsn1.Integer Failure { get; set; }
         public AccessResult(TLV tlv)
         {
-            AvaliableField = (AccessResultFileds)BigEndianBitConverter.Big.ToInt8(tlv.Tag.RawBytes, 0);
-            if (AvaliableField != AccessResultFileds.Failiure)
+            AvaliableField = (AccessResultType)BigEndianBitConverter.Big.ToInt8(tlv.Tag.RawBytes, 0);
+            if (AvaliableField != AccessResultType.Failiure)
             {
-                AvaliableField = AccessResultFileds.Success;
+                AvaliableField = AccessResultType.Success;
                 Success = new Data(tlv);
             }
             else

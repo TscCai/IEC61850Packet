@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace IEC61850Packet.Mms.Enum
 {
-    public enum AccessResultFileds:byte
+    public enum AccessResultType:byte
     {
         Failiure = 0x80,
         Success

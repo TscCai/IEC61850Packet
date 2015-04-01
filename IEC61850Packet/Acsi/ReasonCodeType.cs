@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace IEC61850Packet
+namespace IEC61850Packet.Acsi
 {
     public enum ReasonCodeType:uint
     {
