@@ -181,3 +181,9 @@ UpgradeLog*.htm
 
 # Microsoft Fakes
 FakesAssemblies/
+/Test/CapturedFiles/20140725-210910_00036E3E-20+20_RcdD05.pcap
+/Test/CapturedFiles/20140813-150920_0005ED9B-50+60_MMS.pcap
+/Test/CapturedFiles/20140826-113450-10+20_RcdD05_.pcap
+/Test/log.txt
+/Test/CapturedFiles/[220kV B网]20140820-093320_0006D1FF-10+10.pcap
+*.pcap
