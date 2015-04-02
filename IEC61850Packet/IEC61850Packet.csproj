@@ -17,7 +17,7 @@
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>TRACE;DEBUG;MMS GOOSE SV _SHOW_DETAILS</DefineConstants>
+    <DefineConstants>TRACE;DEBUG</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <DocumentationFile>
@@ -54,6 +54,10 @@
     <Compile Include="Asn1\Types\Boolean.cs" />
     <Compile Include="CotpPacketBuffer.cs" />
     <Compile Include="CotpPacketBufferFactory.cs" />
+    <Compile Include="Device\DeviceOpenedEventArgs.cs" />
+    <Compile Include="Device\DeviceOpeningEventArgs.cs" />
+    <Compile Include="Device\DeviceOpenedEventHandler.cs" />
+    <Compile Include="Device\DeviceOpeningEventHandler.cs" />
     <Compile Include="EthernetPacketTypeEx.cs" />
     <Compile Include="Goose\Apdu.cs" />
     <Compile Include="Goose\GoosePacket.cs" />

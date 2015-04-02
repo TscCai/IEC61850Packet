@@ -15,6 +15,7 @@ namespace IEC61850Packet.Device
 {
     public class ResolveDevice : CaptureFileReaderDevice
     {
+        #region Propoerties
         public int PacketCount { get; private set; }
         public bool HasNextPacket
         {
@@ -28,22 +29,43 @@ namespace IEC61850Packet.Device
                 return result;
             }
         }
-        public ResolveDevice(string captureFilename) : base(captureFilename) { }
+        public event DeviceOpenedEventHandler OnOpened;
+        public event DeviceOpeningEventHandler OnOpening;
+        #endregion
+
+        #region Private members
         List<Packet> packets = new List<Packet>();
-        List<Type> packetTypes = new List<Type>();
-        
+        //List<Type> packetTypes = new List<Type>();
         TpktPacketBuffer tpktBuff;
         CotpPacketBuffer cotpBuff;
         int currentPacketIndex = 1;
+        long filePosition = 0;
+        private delegate void RaiseEventHandler(object sender,int length);
+        private event RaiseEventHandler OnRaising;
+        #endregion
+
+        public ResolveDevice(string captureFilename)
+            : base(captureFilename)
+        {
+        }
+
         public override void Open()
         {
+            if (OnOpening == null)
+            {
+                OnRaising += Refuse_OnRaising;
+            }
+            else
+            {
+                OnRaising += Raise_OnRaising;
+            }
+
             base.Open();
             // var dev = new CaptureFileReaderDevice(@"..\..\CapturedFiles\20140813-150920_0005ED9B-50+60_MMS.pcap");
             // dev.Filter = "ip src 198.121.0.92 and tcp"; // 92 or 115
 
             RawCapture rawCapture;
             rawCapture = base.GetNextPacket();
-
             while (rawCapture != null)
             {
                 Packet p = Packet.ParsePacket(rawCapture.LinkLayerType, rawCapture.Data);
@@ -52,20 +74,14 @@ namespace IEC61850Packet.Device
                     TcpPacket tcp = p.Extract<TcpPacket>();
                     if (tcp != null && tcp.PayloadData.Length > 0)
                     {
-#if MMS
                         ExtractUpperPacket(tcp);
-#endif
                     }
                     else
                     {
                         // UNDONE: For GOOSE and SV or null TCP
-#if GOOSE
                         EthernetPacket ether = p.Extract<EthernetPacket>();
                         ExtractEthernetPacket(ether);
-#endif
                     }
-
-
                 }
                 catch (Exception ex)
                 {
@@ -78,13 +94,52 @@ namespace IEC61850Packet.Device
                 {
                     rawCapture = base.GetNextPacket();
                     currentPacketIndex++;
-                }
-
+                    OnRaising(this,p.Bytes.Length);
+                    //OnOpening(this, new DeviceOpeningEventArgs((double)p.Bytes.Length / base.FileSize));
+                }            
             }
 
             // TODO: Reset the pos, raise the Opened Event
             currentPacketIndex = 0;
             PacketCount = packets.Count;
+            if (OnOpened != null)
+            {
+                OnOpened(this, new DeviceOpenedEventArgs());
+            }
+        }
+               
+        public new Packet GetNextPacket()
+        {
+            if (currentPacketIndex <= PacketCount)
+            {
+                return packets[currentPacketIndex++];
+            }
+            else
+            {
+                throw new InvalidOperationException("No more packets.");
+            }
+        }
+
+        //public Type GetPacketType()
+        //{
+        //    return packetTypes[currentPacketIndex];
+        //}
+
+        public override void Close()
+        {
+            OnOpened = null;
+            OnOpening = null;
+            OnRaising = null;
+            tpktBuff.Reset();
+            tpktBuff = null;
+            cotpBuff.Reset();
+            cotpBuff = null;
+            packets.Clear();
+            packets = null;
+            PacketCount = 0;
+            filePosition = 0;
+            currentPacketIndex = -1;
+            base.Close();
         }
 
         private void ExtractUpperPacket(TcpPacket tcp)
@@ -121,17 +176,17 @@ namespace IEC61850Packet.Device
                                     var session = new OsiSessionPacket(reassCotp.PayloadData, reassCotp);
                                     //packets.Add();
                                     var mms = session.Extract<MmsPacket>();
-                                    if(mms!=null)
+                                    if (mms != null)
                                     {
                                         packets.Add(mms);
-                                        packetTypes.Add(typeof(MmsPacket));
+                                      //  packetTypes.Add(typeof(MmsPacket));
                                     }
                                     else
                                     {
                                         packets.Add(session);
-                                        packetTypes.Add(typeof(OsiSessionPacket));
+                                       // packetTypes.Add(typeof(OsiSessionPacket));
                                     }
-                                    
+
                                     cotpBuff.Reset();
 
                                     #region For debug
@@ -164,7 +219,7 @@ namespace IEC61850Packet.Device
                     ether.PayloadPacket = new GoosePacket(ether.PayloadData, ether);
                     int len = ether.PayloadPacket.Extract<GoosePacket>().APDU.Bytes.Length;
                     packets.Add(ether.PayloadPacket);
-                    packetTypes.Add(typeof(GoosePacket));
+                  //  packetTypes.Add(typeof(GoosePacket));
                     break;
                 case EthernetPacketType.Sv:
                     // UNDONE: SV construct
@@ -176,25 +231,19 @@ namespace IEC61850Packet.Device
                     // Unknown packet
                     break;
             }
-           
+
         }
 
-        public new Packet GetNextPacket()
+        private void Refuse_OnRaising(object sender, int length)
         {
-            if (currentPacketIndex <= PacketCount)
-            {
-                return packets[currentPacketIndex++];
-            }
-            else
-            {
-                throw new InvalidOperationException("No more packets.");
-            }
+
         }
 
-        public Type GetPacketType()
+        private void Raise_OnRaising(object sender, int length)
         {
-            return packetTypes[currentPacketIndex];
+            filePosition += length;
+            OnOpening(this, new DeviceOpeningEventArgs((double)filePosition / base.FileSize));
         }
-    
+   
     }
 }

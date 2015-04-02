@@ -34,7 +34,6 @@ namespace IEC61850Packet.Mms
                 default:
                     break;
             }
-            TLV member = new TLV(bas);
 
             this.Bytes = bas;
 
