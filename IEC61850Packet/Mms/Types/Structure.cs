@@ -94,5 +94,62 @@ namespace IEC61850Packet.Mms.Types
 
         }
 
+        public override string ToString()
+        {
+            string result = "";
+            for(int i=0;i<Values.Count;i++)
+            {
+                switch (Types[i])
+                {
+                    case Data.VariableType.Array:
+                        break;
+                    case Data.VariableType.Bcd:
+                        break;
+                    case Data.VariableType.BinaryTime:
+                        break;
+                    case Data.VariableType.BitString:
+                        result += ((BitString)Values[i]).ToString();
+                        break;
+                    case Data.VariableType.Boolean:
+                        result += (Values[i] as TAsn1.Boolean).ToString();
+                        break;
+                    case Data.VariableType.BooleanArray:
+                        break;
+                    case Data.VariableType.FloatPoint:
+                        result += (Values[i] as FloatPoint).ToString();
+                        break;
+                    case Data.VariableType.GeneralizedTime:
+                        
+                        break;
+                    case Data.VariableType.Integer:
+                        result += (Values[i] as Integer).ToString();
+                        break;
+                    case Data.VariableType.MmsString:
+                        
+                        break;
+                    case Data.VariableType.ObjId:
+                        result += (Values[i] as ObjectIdentifier).ToString();
+                        break;
+                    case Data.VariableType.OctetString:
+                        result += (Values[i] as OctetString).ToString();
+                        break;
+                    case Data.VariableType.Structure:
+                        result += (Values[i] as Structure).ToString();
+                        break;
+                    case Data.VariableType.Unsigned:
+                        result += (Values[i] as Integer).ToString();
+                        break;
+                    case Data.VariableType.UtcTime:
+                        result += (Values[i] as UtcTime).ToString();
+                        break;
+                    case Data.VariableType.VisibleString:
+                        result += (Values[i] as VisibleString).ToString();
+                        break;
+                }
+                result += "\n";
+            }
+            return result;
+        }
+
     }
 }

@@ -20,6 +20,10 @@ namespace IEC61850Packet.Asn1.Types
             this.Bytes = tlv.Bytes;
         }
 
+        public override string ToString()
+        {
+            return Value.ToString();
+        }
         
     }
 }

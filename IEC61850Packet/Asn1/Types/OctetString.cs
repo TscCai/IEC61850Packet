@@ -15,5 +15,11 @@ namespace IEC61850Packet.Asn1.Types
             Value = BitConverter.ToString(tlv.Value.RawBytes, 0);
             this.Bytes = tlv.Bytes;
         }
+
+        public override string ToString()
+        {
+            return Value;
+        }
+
     }
 }

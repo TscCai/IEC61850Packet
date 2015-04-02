@@ -68,5 +68,10 @@ namespace IEC61850Packet.Asn1.Types
             Value = new String('0', len - str.Length - bit) + str;
             this.Bytes = tlv.Bytes;
         }
+
+        public override string ToString()
+        {
+            return Value;
+        }
     }
 }

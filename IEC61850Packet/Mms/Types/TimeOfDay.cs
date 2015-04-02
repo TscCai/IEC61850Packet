@@ -38,5 +38,10 @@ namespace IEC61850Packet.Mms.Types
             Value = Value.AddMilliseconds(BigEndianBitConverter.Big.ToUInt32(ms,0));
             this.Bytes = tlv.Bytes;
         }
+
+        public override string ToString()
+        {
+            return Value.ToString("yyyy-MM-dd HH:mm:ss.ffffff");
+        }
     }
 }

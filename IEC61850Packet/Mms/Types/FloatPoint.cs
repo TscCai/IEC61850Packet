@@ -32,5 +32,26 @@ namespace IEC61850Packet.Mms.Types
             }
             this.Bytes = tlv.Bytes;
         }
+
+        public override string ToString()
+        {
+            return Value.ToString();
+        }
+
+        public string ToString(string format)
+        {
+            return Value.ToString(format);
+        }
+
+        public string ToString(IFormatProvider provider)
+        {
+            return Value.ToString(provider);
+        }
+
+        public string ToString(string format,IFormatProvider provider)
+        {
+            return Value.ToString(format,provider);
+        }
+
     }
 }
