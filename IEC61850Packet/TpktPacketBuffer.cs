@@ -53,10 +53,7 @@ namespace IEC61850Packet
                 Reassembled.Add(new TpktPacket(segBuffer.ToArray(), packetBuffer[0].ParentPacket));
                 segBuffer.Clear();
             }
-            //else if (packetBuffer[0].Length < segBuffer.Count)
-            //{
-            //    Reassemble(packetBuffer[0].TpktSegments, 0);
-            //}
+
             Reassemble(packetBuffer[0].TpktSegments, 0);
 
             for (int i = 1; i < Count; i++)

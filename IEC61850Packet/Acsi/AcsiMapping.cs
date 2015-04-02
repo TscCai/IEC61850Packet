@@ -18,7 +18,7 @@ namespace IEC61850Packet.Acsi
     {
 
         public string RptID { get; private set; }   // always exists
-        public List<ReportedOptFldsType> ReportedOptFlds { get; private set; }  // always exists
+        public ReportedOptFldsType ReportedOptFlds { get; private set; }  // always exists
         public int SeqNum { get; set; }    // if (OptFlds.sequence-number)
         public DateTime TimeofEntry { get; private set; }   // if(OptFlds.report-time-stamp)
         public string DatSet { get; private set; }  // if(OptFlds.data-set-name)
@@ -50,43 +50,43 @@ namespace IEC61850Packet.Acsi
             BitString bitstr = ListOfAccessResult[pos].Success.GetValue<BitString>();
             pos++;
 
-            ushort raw = BigEndianBitConverter.Big.ToUInt16(bitstr.Bytes.ActualBytes(),3);
-            ReportedOptFlds = new List<ReportedOptFldsType>();
+            ReportedOptFldsType optFlds = (ReportedOptFldsType)BigEndianBitConverter.Big.ToUInt16(bitstr.Bytes.ActualBytes(), 3);
+            ReportedOptFlds = optFlds; //new List<ReportedOptFldsType>();
 
 
-            if ((raw & (ushort)ReportedOptFldsType.Sequence_Number) > 0)
+            if ((optFlds & ReportedOptFldsType.SequenceNumber) >0)
             {
-                ReportedOptFlds.Add(ReportedOptFldsType.Sequence_Number);
+                //ReportedOptFlds.Add(ReportedOptFldsType.Sequence_Number);
                 SeqNum = ListOfAccessResult[pos].Success.GetValue<Integer>().Value;
                 pos++;
             }
-            if ((raw & (ushort)ReportedOptFldsType.Report_Time_Stamp) > 0)
+            if ((optFlds & ReportedOptFldsType.ReportTimeStamp) > 0)
             {
-                ReportedOptFlds.Add(ReportedOptFldsType.Report_Time_Stamp);
+                //ReportedOptFlds.Add(ReportedOptFldsType.Report_Time_Stamp);
                 TimeofEntry = ListOfAccessResult[pos].Success.GetValue<TimeOfDay>().Value;
                 pos++;
             }
-            if ((raw & (ushort)ReportedOptFldsType.Data_Set_Name) > 0)
+            if ((optFlds & ReportedOptFldsType.DataSetName) > 0)
             {
-                ReportedOptFlds.Add(ReportedOptFldsType.Data_Set_Name);
+                //ReportedOptFlds.Add(ReportedOptFldsType.Data_Set_Name);
                 DatSet = ListOfAccessResult[pos].Success.GetValue<VisibleString>().Value;
                 pos++;
             }
-            if ((raw & (ushort)ReportedOptFldsType.Buffer_Overflow) > 0)
+            if ((optFlds & ReportedOptFldsType.BufferOverflow) > 0)
             {
-                ReportedOptFlds.Add(ReportedOptFldsType.Buffer_Overflow);
+                //ReportedOptFlds.Add(ReportedOptFldsType.Buffer_Overflow);
                 BufOvfl = ListOfAccessResult[pos].Success.GetValue<TAsn1.Boolean>().Value;
                 pos++;
             }
-            if ((raw & (ushort)ReportedOptFldsType.EntryID) > 0)
+            if ((optFlds & ReportedOptFldsType.EntryID) > 0)
             {
-                ReportedOptFlds.Add(ReportedOptFldsType.EntryID);
+                //ReportedOptFlds.Add(ReportedOptFldsType.EntryID);
                 EntryID = ListOfAccessResult[pos].Success.GetValue<OctetString>().Value;
                 pos++;
             }
-            if ((raw & (ushort)ReportedOptFldsType.Segmentation) > 0)
+            if ((optFlds & ReportedOptFldsType.Segmentation) > 0)
             {
-                ReportedOptFlds.Add(ReportedOptFldsType.Segmentation);
+                //ReportedOptFlds.Add(ReportedOptFldsType.Segmentation);
                 // Incorrect codes below, won't use recently.
                 SubSeqNum = ListOfAccessResult[pos].Success.GetValue<Integer>().Value;
                 pos++;
@@ -98,10 +98,10 @@ namespace IEC61850Packet.Acsi
             Inclusion_Bitstring = ListOfAccessResult[pos].Success.GetValue<BitString>().Value;
             pos++;
 
-            if ((raw & (ushort)ReportedOptFldsType.Data_Reference) > 0)
+            if ((optFlds & ReportedOptFldsType.DataReference) > 0)
             {
                 DataRef = new List<string>();
-                ReportedOptFlds.Add(ReportedOptFldsType.Data_Reference);
+                //ReportedOptFlds.Add(ReportedOptFldsType.Data_Reference);
                 AvaliableCnt = Inclusion_Bitstring.Count(ch => ch == '1');
                 for (int i = 0; i < AvaliableCnt; i++)
                 {
@@ -119,13 +119,13 @@ namespace IEC61850Packet.Acsi
             }
 
             // This filed never show up in packet, but still a option in ReportedOptFlds
-            if ((raw & (ushort)ReportedOptFldsType.Conf_Rev) > 0)
+            if ((optFlds & ReportedOptFldsType.ConfRev) > 0)
             {
-                ReportedOptFlds.Add(ReportedOptFldsType.Conf_Rev);
+                //ReportedOptFlds.Add(ReportedOptFldsType.Conf_Rev);
             }
-            if ((raw & (ushort)ReportedOptFldsType.Reason_For_Inclusion) > 0)
+            if ((optFlds & ReportedOptFldsType.ReasonForInclusion) > 0)
             {
-                ReportedOptFlds.Add(ReportedOptFldsType.Reason_For_Inclusion);
+                //ReportedOptFlds.Add(ReportedOptFldsType.Reason_For_Inclusion);
                 ReasonCode = new List<ReasonCodeType>();
                 for (int i = 0; i < AvaliableCnt; i++)
                 {

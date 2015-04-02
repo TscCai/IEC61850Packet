@@ -24,8 +24,28 @@ namespace IEC61850Packet.Utils
 
         public static T ParentPacket<T>(this Packet packet)
         {
-            object p = packet.ParentPacket;
+            object p = packet.ParentPacket(typeof(T));
+           
             return (T)p;
+        }
+
+        public static Packet ParentPacket(this Packet p, System.Type type)
+        {
+            //var p = this;
+
+            // search for a packet type that matches the given one
+            do
+            {
+                if (type.IsAssignableFrom(p.GetType()))
+                {
+                    return p;
+                }
+
+                // move to the ParentPacket
+                p = p.ParentPacket;
+            } while (p != null);
+
+            return null;
         }
     }
 }

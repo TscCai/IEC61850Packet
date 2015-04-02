@@ -46,12 +46,7 @@ namespace IEC61850Packet
                 Reasseble();
             }
         }
-        /*
-        public List<T> Reassemble<T>()
-        {
-            throw new NotImplementedException("IEC61850Packet.CotpPacketBuffer can't reassemble packets as serveral ones.");
-        }
-        */
+
         /// <summary>
         /// Reaseemble the packets in Buffer, and flush it.
         /// </summary>
@@ -65,7 +60,7 @@ namespace IEC61850Packet
                 joint.AddRange(i.PayloadData);
             }
 
-            Reassembled = new CotpPacket(new ByteArraySegment(joint.ToArray()), null);
+            Reassembled = new CotpPacket(new ByteArraySegment(joint.ToArray()), packetBuffer[packetBuffer.Count - 1].ParentPacket);
             joint.Clear();
             joint = null;
             IsReassembled = true;

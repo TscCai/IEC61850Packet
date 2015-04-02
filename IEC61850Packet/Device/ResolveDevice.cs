@@ -134,11 +134,11 @@ namespace IEC61850Packet.Device
             tpktBuff = null;
             cotpBuff.Reset();
             cotpBuff = null;
-            packets.Clear();
-            packets = null;
-            PacketCount = 0;
-            filePosition = 0;
-            currentPacketIndex = -1;
+            //packets.Clear();
+            //packets = null;
+            //PacketCount = 0;
+            //filePosition = 0;
+            currentPacketIndex = 0;
             base.Close();
         }
 
