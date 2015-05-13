@@ -61,9 +61,6 @@ namespace IEC61850Packet.Device
             }
 
             base.Open();
-            // var dev = new CaptureFileReaderDevice(@"..\..\CapturedFiles\20140813-150920_0005ED9B-50+60_MMS.pcap");
-            // dev.Filter = "ip src 198.121.0.92 and tcp"; // 92 or 115
-
             RawCapture rawCapture;
             rawCapture = base.GetNextPacket();
             while (rawCapture != null)
@@ -179,12 +176,10 @@ namespace IEC61850Packet.Device
                                     if (mms != null)
                                     {
                                         packets.Add(mms);
-                                      //  packetTypes.Add(typeof(MmsPacket));
                                     }
                                     else
                                     {
                                         packets.Add(session);
-                                       // packetTypes.Add(typeof(OsiSessionPacket));
                                     }
 
                                     cotpBuff.Reset();
