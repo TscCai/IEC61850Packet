@@ -31,23 +31,23 @@ namespace IEC61850Packet.Acsi
         public List<BasicType> Value { get; private set; }
         public List<ReasonCodeType> ReasonCode { get; private set; }    // if(OptFlds.reason-for-inclusion)
 
-        List<AccessResult> ListOfAccessResult { get; set; }
-        int AvaliableCnt { get; set; }
+        List<AccessResult> listOfAccessResult { get; set; }
+        int avaliableCnt { get; set; }
         int pos = 0;
 
         public AcsiMapping(List<AccessResult> listOfAccessResult)
         {
-            ListOfAccessResult = listOfAccessResult;
+            this.listOfAccessResult = listOfAccessResult;
             Resovle();
 
         }
 
         private void Resovle()
         {
-            RptID = ListOfAccessResult[pos].Success.GetValue<VisibleString>().Value;
+            RptID = listOfAccessResult[pos].Success.GetValue<VisibleString>().Value;
             pos++;  // 0 is RptID, 1 is OptFlds
 
-            BitString bitstr = ListOfAccessResult[pos].Success.GetValue<BitString>();
+            BitString bitstr = listOfAccessResult[pos].Success.GetValue<BitString>();
             pos++;
 
             ReportedOptFldsType optFlds = (ReportedOptFldsType)BigEndianBitConverter.Big.ToUInt16(bitstr.Bytes.ActualBytes(), 3);
@@ -57,64 +57,64 @@ namespace IEC61850Packet.Acsi
             if ((optFlds & ReportedOptFldsType.SequenceNumber) >0)
             {
                 //ReportedOptFlds.Add(ReportedOptFldsType.Sequence_Number);
-                SeqNum = ListOfAccessResult[pos].Success.GetValue<Integer>().Value;
+                SeqNum = listOfAccessResult[pos].Success.GetValue<Integer>().Value;
                 pos++;
             }
             if ((optFlds & ReportedOptFldsType.ReportTimeStamp) > 0)
             {
                 //ReportedOptFlds.Add(ReportedOptFldsType.Report_Time_Stamp);
-                TimeofEntry = ListOfAccessResult[pos].Success.GetValue<TimeOfDay>().Value;
+                TimeofEntry = listOfAccessResult[pos].Success.GetValue<TimeOfDay>().Value;
                 pos++;
             }
             if ((optFlds & ReportedOptFldsType.DataSetName) > 0)
             {
                 //ReportedOptFlds.Add(ReportedOptFldsType.Data_Set_Name);
-                DatSet = ListOfAccessResult[pos].Success.GetValue<VisibleString>().Value;
+                DatSet = listOfAccessResult[pos].Success.GetValue<VisibleString>().Value;
                 pos++;
             }
             if ((optFlds & ReportedOptFldsType.BufferOverflow) > 0)
             {
                 //ReportedOptFlds.Add(ReportedOptFldsType.Buffer_Overflow);
-                BufOvfl = ListOfAccessResult[pos].Success.GetValue<TAsn1.Boolean>().Value;
+                BufOvfl = listOfAccessResult[pos].Success.GetValue<TAsn1.Boolean>().Value;
                 pos++;
             }
             if ((optFlds & ReportedOptFldsType.EntryID) > 0)
             {
                 //ReportedOptFlds.Add(ReportedOptFldsType.EntryID);
-                EntryID = ListOfAccessResult[pos].Success.GetValue<OctetString>().Value;
+                EntryID = listOfAccessResult[pos].Success.GetValue<OctetString>().Value;
                 pos++;
             }
             if ((optFlds & ReportedOptFldsType.Segmentation) > 0)
             {
                 //ReportedOptFlds.Add(ReportedOptFldsType.Segmentation);
                 // Incorrect codes below, won't use recently.
-                SubSeqNum = ListOfAccessResult[pos].Success.GetValue<Integer>().Value;
+                SubSeqNum = listOfAccessResult[pos].Success.GetValue<Integer>().Value;
                 pos++;
-                MoreSegmentFollow = ListOfAccessResult[pos].Success.GetValue<TAsn1.Boolean>().Value;
+                MoreSegmentFollow = listOfAccessResult[pos].Success.GetValue<TAsn1.Boolean>().Value;
                 pos++;
             }
 
             // Inclusion-bitstring
-            Inclusion_Bitstring = ListOfAccessResult[pos].Success.GetValue<BitString>().Value;
+            Inclusion_Bitstring = listOfAccessResult[pos].Success.GetValue<BitString>().Value;
             pos++;
 
             if ((optFlds & ReportedOptFldsType.DataReference) > 0)
             {
                 DataRef = new List<string>();
                 //ReportedOptFlds.Add(ReportedOptFldsType.Data_Reference);
-                AvaliableCnt = Inclusion_Bitstring.Count(ch => ch == '1');
-                for (int i = 0; i < AvaliableCnt; i++)
+                avaliableCnt = Inclusion_Bitstring.Count(ch => ch == '1');
+                for (int i = 0; i < avaliableCnt; i++)
                 {
-                    DataRef.Add(ListOfAccessResult[pos].Success.GetValue<VisibleString>().Value);
+                    DataRef.Add(listOfAccessResult[pos].Success.GetValue<VisibleString>().Value);
                     pos++;
                 }
             }
 
             // Value
             Value = new List<BasicType>();
-            for (int i = 0; i < AvaliableCnt; i++)
+            for (int i = 0; i < avaliableCnt; i++)
             {
-                Value.Add(ListOfAccessResult[pos].Success.GetValue<BasicType>());
+                Value.Add(listOfAccessResult[pos].Success.GetValue<BasicType>());
                 pos++;
             }
 
@@ -127,10 +127,10 @@ namespace IEC61850Packet.Acsi
             {
                 //ReportedOptFlds.Add(ReportedOptFldsType.Reason_For_Inclusion);
                 ReasonCode = new List<ReasonCodeType>();
-                for (int i = 0; i < AvaliableCnt; i++)
+                for (int i = 0; i < avaliableCnt; i++)
                 {
                     ReasonCode.Add((ReasonCodeType)BigEndianBitConverter.Big.ToUInt32(
-                        ListOfAccessResult[pos].Success.GetValue<BitString>().Bytes.ActualBytes(), 0
+                        listOfAccessResult[pos].Success.GetValue<BitString>().Bytes.ActualBytes(), 0
                         ));
                     pos++;
                 }

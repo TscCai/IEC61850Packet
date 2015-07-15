@@ -146,8 +146,9 @@ namespace IEC61850Packet.Mms.Types
                         result += (Values[i] as VisibleString).ToString();
                         break;
                 }
-                result += "\n";
+                result += ",";
             }
+            result = result.Remove(result.Length-1);
             return result;
         }
 
