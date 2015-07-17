@@ -34,10 +34,10 @@ namespace IEC61850Packet.Device
         #endregion
 
         #region Private members
-        List<Packet> packets = new List<Packet>();
+        static List<Packet> packets = new List<Packet>();
         //List<Type> packetTypes = new List<Type>();
-        TpktPacketBuffer tpktBuff;
-        CotpPacketBuffer cotpBuff;
+        static TpktPacketBuffer tpktBuff;
+        static CotpPacketBuffer cotpBuff;
         int currentPacketIndex = 1;
         long filePosition = 0;
         private delegate void RaiseEventHandler(object sender,int length);
@@ -48,6 +48,7 @@ namespace IEC61850Packet.Device
             : base(captureFilename)
         {
         }
+
 
         public override void Open()
         {
@@ -117,11 +118,6 @@ namespace IEC61850Packet.Device
             }
         }
 
-        //public Type GetPacketType()
-        //{
-        //    return packetTypes[currentPacketIndex];
-        //}
-
         public override void Close()
         {
             OnOpened = null;
@@ -139,7 +135,50 @@ namespace IEC61850Packet.Device
             base.Close();
         }
 
-        private void ExtractUpperPacket(TcpPacket tcp)
+		public static Packet Resovle(RawCapture raw)
+		{
+			RawCapture rawCapture;
+			Packet result = null;
+			rawCapture = raw;
+			if (rawCapture != null)
+			{
+				Packet p = Packet.ParsePacket(rawCapture.LinkLayerType, rawCapture.Data);
+				result = p;
+				try
+				{
+					TcpPacket tcp = p.Extract<TcpPacket>();
+					if (tcp != null && tcp.PayloadData.Length > 0)
+					{
+						ExtractUpperPacket(tcp);
+					}
+					else
+					{
+						// UNDONE: For GOOSE and SV or null TCP
+						EthernetPacket ether = p.Extract<EthernetPacket>();
+						ExtractEthernetPacket(ether);
+					}
+				}
+				catch (Exception ex)
+				{
+#if DEBUG
+                    Console.WriteLine("No. {0}: {1}\nTPKT buffer count: {2}.", currentPacketIndex, ex.Message, tpktBuff.Reassembled.Count);
+
+                    Console.WriteLine(ex.StackTrace);
+#endif
+				}
+
+
+			}
+			if (packets.Count > 0)
+			{
+				result = packets.First();
+				packets.RemoveAt(0);
+			}
+
+			return result;
+		}
+
+        private static void ExtractUpperPacket(TcpPacket tcp)
         {
 
             TpktFileds tf = new TpktFileds();
@@ -206,7 +245,7 @@ namespace IEC61850Packet.Device
 
         }
 
-        private void ExtractEthernetPacket(EthernetPacket ether)
+        private static void ExtractEthernetPacket(EthernetPacket ether)
         {
             switch (ether.Type)
             {

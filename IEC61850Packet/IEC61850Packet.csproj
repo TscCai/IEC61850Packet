@@ -54,6 +54,7 @@
     <Compile Include="Asn1\Types\Boolean.cs" />
     <Compile Include="CotpPacketBuffer.cs" />
     <Compile Include="CotpPacketBufferFactory.cs" />
+    <Compile Include="Device\CaptureDevice.cs" />
     <Compile Include="Device\DeviceOpenedEventArgs.cs" />
     <Compile Include="Device\DeviceOpeningEventArgs.cs" />
     <Compile Include="Device\DeviceOpenedEventHandler.cs" />

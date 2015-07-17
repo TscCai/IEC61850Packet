@@ -94,13 +94,22 @@ namespace IEC61850Packet.Goose
 
             pdu.Length += tmp.Bytes.Length;
             tmp = new TLV(pdu.EncapsulatedBytes());
-            int pos = 0;
-            int len = tmp.Value.Bytes.Length;
-            while(pos<len)
+            int cnt = 0;
+        //    int len = tmp.Value.Bytes.Length;
+
+			TLV data = new TLV(tmp.Value.Bytes);
+			allData.Add(new Data(data));
+			cnt++;
+
+            while(cnt < numDatSetEntries.Value)
             {
-                TLV data = new TLV(tmp.Value.Bytes);
+				data = new TLV(tmp.Value.Bytes.EncapsulatedBytes());
+				tmp.Value.Bytes.Length += data.Bytes.Length;
+                //TLV data = new TLV(tmp.Value.Bytes);
                 allData.Add(new Data(data));
-                pos += data.Bytes.Length;
+				cnt++;
+				//tmp.Value.Bytes.Length += data.Bytes.Length;
+				
             }
 
         }
