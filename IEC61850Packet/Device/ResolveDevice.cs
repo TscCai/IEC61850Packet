@@ -9,6 +9,7 @@ using SharpPcap.LibPcap;
 using IEC61850Packet.Utils;
 using IEC61850Packet.Goose;
 using IEC61850Packet.Mms;
+using IEC61850Packet.Sv;
 
 
 namespace IEC61850Packet.Device
@@ -135,6 +136,11 @@ namespace IEC61850Packet.Device
             base.Close();
         }
 
+		/// <summary>
+		/// Resovle a single packet, usually for capturing packet but not captured .pcap files.
+		/// </summary>
+		/// <param name="raw"></param>
+		/// <returns></returns>
 		public static Packet Resovle(RawCapture raw)
 		{
 			RawCapture rawCapture;
@@ -161,8 +167,8 @@ namespace IEC61850Packet.Device
 				catch (Exception ex)
 				{
 #if DEBUG
-                    Console.WriteLine("No. {0}: {1}\nTPKT buffer count: {2}.", currentPacketIndex, ex.Message, tpktBuff.Reassembled.Count);
-
+                    //Console.WriteLine("No. {0}: {1}\nTPKT buffer count: {2}.", currentPacketIndex, ex.Message, tpktBuff.Reassembled.Count);
+					Console.WriteLine("Error: {0}\nTPKT buffer count: {1}.", ex.Message, tpktBuff.Reassembled.Count);
                     Console.WriteLine(ex.StackTrace);
 #endif
 				}
@@ -251,13 +257,15 @@ namespace IEC61850Packet.Device
             {
                 case EthernetPacketType.Goose:
                     ether.PayloadPacket = new GoosePacket(ether.PayloadData, ether);
-                    int len = ether.PayloadPacket.Extract<GoosePacket>().APDU.Bytes.Length;
+                    //int len = ether.PayloadPacket.Extract<GoosePacket>().APDU.Bytes.Length;
                     packets.Add(ether.PayloadPacket);
                   //  packetTypes.Add(typeof(GoosePacket));
                     break;
                 case EthernetPacketType.Sv:
                     // UNDONE: SV construct
-                    // packets.Add(ether);
+				//	ether.PayloadPacket = new SvPacket(ether.PayloadData, ether);
+					
+                  //  packets.Add(ether);
                     break;
                 case EthernetPacketType.Gse:
                     break;

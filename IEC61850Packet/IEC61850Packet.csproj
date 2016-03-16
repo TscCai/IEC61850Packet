@@ -63,6 +63,7 @@
     <Compile Include="Goose\Apdu.cs" />
     <Compile Include="Goose\GoosePacket.cs" />
     <Compile Include="Goose\GooseFileds.cs" />
+    <Compile Include="Sv\SvPacket.cs" />
     <Compile Include="TpktPacketBufferFactory.cs" />
     <Compile Include="Mms\Types\FloatPoint.cs" />
     <Compile Include="Mms\Types\Structure.cs" />
@@ -129,9 +130,7 @@
     <Content Include="lib\SharpPcap.dll" />
     <Content Include="lib\SharpPcap.xml" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Sv\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
