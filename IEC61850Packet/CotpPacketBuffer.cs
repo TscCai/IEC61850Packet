@@ -25,10 +25,6 @@ namespace IEC61850Packet
         public bool IsReassembled { get; private set; }
         List<CotpPacket> packetBuffer { get; set; }
         CotpPacket reassembled;
-		public int Count
-		{
-			get { return packetBuffer.Count; }
-		}
         public CotpPacketBuffer()
         {
             packetBuffer = new List<CotpPacket>();

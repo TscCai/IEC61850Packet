@@ -5,16 +5,38 @@ using System.Text;
 using System.Threading.Tasks;
 using MiscUtil.Conversion;
 using IEC61850Packet.Utils;
+using IEC61850Packet.Asn1;
 using IEC61850Packet.Asn1.Types;
 using TAsn1 = IEC61850Packet.Asn1.Types;
 
-namespace IEC61850Packet.Asn1
+namespace IEC61850Packet.Mms.Types
 {
-    public class Data
+    public class Data : BasicType
     {
+        public enum VariableType : byte
+        {
+            Array = 0xA1, // Sequence of Data
+            Structure = 0xA2, //Sequence of Data
+            Boolean = 0x83,   //
+            BitString = 0x84,
+            Integer = 0x85,
+            Unsigned = 0x86,  // UInt32
+            FloatPoint = 0x87,
+            // 0xA8 is reserved
+            OctetString = 0x89,
+            VisibleString = 0x8A,
+            GeneralizedTime = 0x8B,
+            BinaryTime = 0x8C,    // TimeOfDay
+            Bcd = 0x8D,   //Integer, non-negative
+            BooleanArray = 0x8E,  // Bitstring
+            ObjId = 0x8F, // Object Identifier
+            MmsString = 0x90,  // MMSString
+            UtcTime=0x91
+        }
+
         public VariableType Type { get; private set; }
         public Data() { }
-        public object Value { get; set; }
+        object Value { get; set; }
 
         public Data(TLV tlv)
         {
@@ -68,6 +90,7 @@ namespace IEC61850Packet.Asn1
                 default:
                     break;
             }
+            this.Bytes = tlv.Bytes;
         }
 
         public T GetValue<T>()

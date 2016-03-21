@@ -7,8 +7,7 @@ using PacketDotNet;
 using PacketDotNet.Utils;
 using MiscUtil.Conversion;
 using IEC61850Packet.Utils;
-using IEC61850Packet.Mms.Acsi;
-
+using IEC61850Packet.Acsi;
 
 namespace IEC61850Packet.Mms
 {

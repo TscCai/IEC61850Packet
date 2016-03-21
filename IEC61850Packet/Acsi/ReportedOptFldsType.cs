@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace IEC61850Packet.Mms.Acsi
+namespace IEC61850Packet.Acsi
 {
     public enum ReportedOptFldsType:ushort
     {
