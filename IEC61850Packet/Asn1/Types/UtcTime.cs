@@ -8,7 +8,7 @@ using IEC61850Packet.Asn1.Types;
 using MiscUtil.Conversion;
 using IEC61850Packet.Utils;
 
-namespace IEC61850Packet.Mms.Types
+namespace IEC61850Packet.Asn1.Types
 {
     public class UtcTime:BasicType
     {

@@ -19,8 +19,8 @@ namespace IEC61850Packet.Asn1.Types
         {
             this.Bytes = tlv.Bytes;
             int len = tlv.Length.Value;
-            // Maybe wrong if len !=4
-            Value = BigEndianBitConverter.Big.ToInt32(tlv.Value.RawBytes, 0,true);
+
+			Value = BigEndianBitConverter.Big.ToInt32(tlv.Value.RawBytes, 0,true);
         }
 
         public override string ToString()

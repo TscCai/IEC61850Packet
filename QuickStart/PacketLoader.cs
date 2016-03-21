@@ -1,17 +1,17 @@
 ﻿using System;
-using System.IO;
-using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using PacketDotNet;
-using IEC61850Packet.Acsi;
 using IEC61850Packet.Device;
 using IEC61850Packet.Goose;
 using IEC61850Packet.Mms;
-using IEC61850Packet.Mms.Types;
 using IEC61850Packet.Utils;
 
 using TAsn1 = IEC61850Packet.Asn1.Types;
+using IEC61850Packet.Mms.Acsi;
+using IEC61850Packet.Asn1.Types;
+using IEC61850Packet.Asn1;
+using IEC61850Packet.Sv;
 
 namespace QuickStart
 {
@@ -129,16 +129,25 @@ namespace QuickStart
 					for (int i = 0; i < goose.APDU.numDatSetEntries.Value; i++)
 					{
 						var type = goose.APDU.allData[i].Type;
+						Type t = System.Reflection.Assembly.Load("IEC61850Packet").GetType("IEC61850Packet.Asn1.Types.UtcTime");
 						object value;
 						switch (type)
 						{
-							case IEC61850Packet.Mms.Types.Data.VariableType.Boolean:
+							case VariableType.Boolean:
 								value = goose.APDU.allData[i].GetValue<TAsn1.Boolean>().Value;
-								sb.AppendFormat("No.{0}. Boolean: {1}\n",i+1,value);
+								sb.AppendFormat("No.{0}. Boolean: {1}\n", i + 1, value);
 								break;
-							case IEC61850Packet.Mms.Types.Data.VariableType.FloatPoint:
+							case VariableType.FloatPoint:
 								value = goose.APDU.allData[i].GetValue<FloatPoint>().Value;
 								sb.AppendFormat("No.{0}. FloatPoint: {1}\n", i + 1, value);
+								break;
+							case VariableType.BitString:
+								value = goose.APDU.allData[i].GetValue<BitString>().Value;
+								sb.AppendFormat("No.{0}. BitString: {1}\n", i + 1, value);
+								break;
+							case VariableType.UtcTime:
+								value = goose.APDU.allData[i].GetValue<UtcTime>().Value;
+								sb.AppendFormat("No.{0}. UtcTime: {1}\n", i + 1, value);
 								break;
 							default:
 								value = null;
@@ -146,9 +155,14 @@ namespace QuickStart
 								break;
 						}
 					}
-		//			Console.WriteLine(sb.ToString());
+					Console.WriteLine(sb.ToString());
 				}
-		//		Console.WriteLine(sb.ToString());
+				else if (p.GetType() == typeof(SvPacket))
+				{
+					var sv = (SvPacket)p;
+					Console.WriteLine("SV 9-2, APPID: {0}, svID: {1}", sv.APPID,sv.APDU.ASDU[0].svID);
+				}
+				Console.WriteLine(sb.ToString());
 				sb.Clear();
 			}
 			Console.WriteLine("{0} packets have been resolved", dev.PacketCount);

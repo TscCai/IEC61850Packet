@@ -14,6 +14,7 @@ namespace IEC61850Packet.Asn1
         public static byte Primitive { get { return 0x00; } }
         public static byte Constructed { get { return 0x20; } }
 
+		// Identifiers below are confilict with the MMS, GOOSE and SV specification.
         public static byte Boolean { get { return 1; } }
         public static byte Integer { get { return 2; } }
         public static byte BitString { get { return 3; } }
