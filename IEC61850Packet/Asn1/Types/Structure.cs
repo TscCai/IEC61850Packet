@@ -4,23 +4,21 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using IEC61850Packet.Asn1;
-using IEC61850Packet.Asn1.Types;
-using TAsn1 = IEC61850Packet.Asn1.Types;
 using MiscUtil.Conversion;
 using IEC61850Packet.Utils;
 using PacketDotNet.Utils;
 
-namespace IEC61850Packet.Mms.Types
+namespace IEC61850Packet.Asn1.Types
 {
     public class Structure : BasicType
     {
         public List<object> Values { get; private set; }
-        public List<Data.VariableType> Types { get; private set; }
+        public List<VariableType> Types { get; private set; }
         public Structure()
         {
             this.Identifier = BerIdentifier.Encode(BerIdentifier.ContextSpecific, BerIdentifier.Constructed, 2);
             Values = new List<object>();
-            Types = new List<Data.VariableType>();
+            Types = new List<VariableType>();
         }
 
         public Structure(TLV tlv)
@@ -34,51 +32,51 @@ namespace IEC61850Packet.Mms.Types
             while (pos < totalLen)
             {
                 TLV tlv_item = new TLV(bas);
-                var itemType = (Data.VariableType)BigEndianBitConverter.Big.ToInt8(tlv_item.Tag.RawBytes, 0);
+                var itemType = (VariableType)BigEndianBitConverter.Big.ToInt8(tlv_item.Tag.RawBytes, 0);
                 BasicType item = null;
                 switch (itemType)
                 {
-                    case Data.VariableType.Array:
+                    case VariableType.Array:
                         break;
-                    case Data.VariableType.Structure:
+                    case VariableType.Structure:
                         item = new Structure(tlv_item);
                         break;
-                    case Data.VariableType.Boolean:
-                        item = new TAsn1.Boolean(tlv_item);
+                    case VariableType.Boolean:
+						item = new IEC61850Packet.Asn1.Types.Boolean(tlv_item);
                         break;
-                    case Data.VariableType.BitString:
+                    case VariableType.BitString:
                         item = new BitString(tlv_item);
                         break;
-                    case Data.VariableType.Integer:
+                    case VariableType.Integer:
                         item = new Integer(tlv_item);
                         break;
-                    case Data.VariableType.Unsigned:     // MMS Unsigned max value is System.Int32.MaxValue, not UInt32.MaxValue
+                    case VariableType.Unsigned:     // MMS Unsigned max value is System.Int32.MaxValue, not UInt32.MaxValue
                         item = new Integer(tlv_item);
                         if (((Integer)item).Value < 0) { throw new FormatException("Unsigned should be non-negative."); }
                         break;
-                    case Data.VariableType.FloatPoint:
+                    case VariableType.FloatPoint:
                         item = new FloatPoint(tlv_item);
                         break;
-                    case Data.VariableType.OctetString:
+                    case VariableType.OctetString:
                         item = new OctetString(tlv_item);
                         break;
-                    case Data.VariableType.VisibleString:
+                    case VariableType.VisibleString:
                         item = new VisibleString(tlv_item);
                         break;
-                    case Data.VariableType.GeneralizedTime:
+                    case VariableType.GeneralizedTime:
                         break;
-                    case Data.VariableType.BinaryTime:   // AKA TimeOfDay
+                    case VariableType.BinaryTime:   // AKA TimeOfDay
                         item = new TimeOfDay(tlv_item);
                         break;
-                    case Data.VariableType.Bcd:
+                    case VariableType.Bcd:
                         break;
-                    case Data.VariableType.BooleanArray:
+                    case VariableType.BooleanArray:
                         break;
-                    case Data.VariableType.ObjId:
+                    case VariableType.ObjId:
                         break;
-                    case Data.VariableType.MmsString:
+                    case VariableType.MmsString:
                         break;
-                    case Data.VariableType.UtcTime:
+                    case VariableType.UtcTime:
                         item = new UtcTime(tlv_item);
                         break;
                     default:
@@ -101,48 +99,48 @@ namespace IEC61850Packet.Mms.Types
             {
                 switch (Types[i])
                 {
-                    case Data.VariableType.Array:
+                    case VariableType.Array:
                         break;
-                    case Data.VariableType.Bcd:
+                    case VariableType.Bcd:
                         break;
-                    case Data.VariableType.BinaryTime:
+                    case VariableType.BinaryTime:
                         break;
-                    case Data.VariableType.BitString:
+                    case VariableType.BitString:
                         result += ((BitString)Values[i]).ToString();
                         break;
-                    case Data.VariableType.Boolean:
-                        result += (Values[i] as TAsn1.Boolean).ToString();
+                    case VariableType.Boolean:
+						result += (Values[i] as IEC61850Packet.Asn1.Types.Boolean).ToString();
                         break;
-                    case Data.VariableType.BooleanArray:
+                    case VariableType.BooleanArray:
                         break;
-                    case Data.VariableType.FloatPoint:
+                    case VariableType.FloatPoint:
                         result += (Values[i] as FloatPoint).ToString();
                         break;
-                    case Data.VariableType.GeneralizedTime:
+                    case VariableType.GeneralizedTime:
                         
                         break;
-                    case Data.VariableType.Integer:
+                    case VariableType.Integer:
                         result += (Values[i] as Integer).ToString();
                         break;
-                    case Data.VariableType.MmsString:
+                    case VariableType.MmsString:
                         
                         break;
-                    case Data.VariableType.ObjId:
+                    case VariableType.ObjId:
                         result += (Values[i] as ObjectIdentifier).ToString();
                         break;
-                    case Data.VariableType.OctetString:
+                    case VariableType.OctetString:
                         result += (Values[i] as OctetString).ToString();
                         break;
-                    case Data.VariableType.Structure:
+                    case VariableType.Structure:
                         result += (Values[i] as Structure).ToString();
                         break;
-                    case Data.VariableType.Unsigned:
+                    case VariableType.Unsigned:
                         result += (Values[i] as Integer).ToString();
                         break;
-                    case Data.VariableType.UtcTime:
+                    case VariableType.UtcTime:
                         result += (Values[i] as UtcTime).ToString();
                         break;
-                    case Data.VariableType.VisibleString:
+                    case VariableType.VisibleString:
                         result += (Values[i] as VisibleString).ToString();
                         break;
                 }

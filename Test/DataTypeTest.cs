@@ -1,8 +1,9 @@
 ﻿//#define SHOW_DETAILS
 using System;
-using IEC61850Packet.Asn1;
 using IEC61850Packet.Asn1.Types;
+using IEC61850Packet.Asn1;
 using IEC61850Packet.Mms.Types;
+using IEC61850Packet.Sv.Types;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using MiscUtil.Conversion;
 using PacketDotNet.Utils;
@@ -28,7 +29,7 @@ namespace Test
             val.CopyTo(raw, id.Length + len.Length);
             Data d = new Data(new TLV(new ByteArraySegment(raw)));
 
-            if (d.Type == Data.VariableType.VisibleString)
+            if (d.Type == VariableType.VisibleString)
             {
                 Console.WriteLine(d.GetValue<VisibleString>().Value);
             }
@@ -42,7 +43,7 @@ namespace Test
             val.CopyTo(raw, id.Length + len.Length);
 
             d = new Data(new TLV(new ByteArraySegment(raw)));
-            if (d.Type == Data.VariableType.BitString)
+            if (d.Type == VariableType.BitString)
             {
                 Console.WriteLine(d.GetValue<BitString>().Value);
             }
@@ -89,13 +90,13 @@ namespace Test
             {
                 switch (s.Types[i])
                 {
-                    case Data.VariableType.Boolean:
+                    case VariableType.Boolean:
                         Console.WriteLine(((TAsn1.Boolean)s.Values[i]).Value);
                         break;
-                    case Data.VariableType.BitString:
+                    case VariableType.BitString:
                         Console.WriteLine(((BitString)s.Values[i]).Value);
                         break;
-                    case Data.VariableType.UtcTime:
+                    case VariableType.UtcTime:
                         Console.WriteLine(((UtcTime)s.Values[i]).ToString());
                         break;
 
@@ -112,7 +113,19 @@ namespace Test
             Console.WriteLine(bs.Value);
         }
 
+		[TestMethod]
+		public void NoASDU_Test()
+		{
+			byte[] raw = {0x80,0x01,0x01 };
+			NoAsdu na = new NoAsdu(new TLV(new ByteArraySegment(raw)));
+			Console.WriteLine(na.Value);
+		}
      
-
+		[TestMethod]
+		public void CDC_Quality_Test()
+		{
+			Quality q = new Quality(new byte[]{0x00,0x00,0x1F,0xFF});
+			Console.WriteLine(q.detailQual);
+		}
     }
 }

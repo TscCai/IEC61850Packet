@@ -4,10 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using IEC61850Packet.Asn1;
-using IEC61850Packet.Asn1.Types;
 using MiscUtil.Conversion;
 
-namespace IEC61850Packet.Mms.Types
+namespace IEC61850Packet.Asn1.Types
 {
     public class FloatPoint:OctetString
     {
